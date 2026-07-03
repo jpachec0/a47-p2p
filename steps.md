@@ -77,11 +77,14 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Added `docs/DEPLOYMENT.md` with public signaling and TURN deployment requirements.
 - Validated authenticated TURN config and signaling deployment assets with TypeScript checks, automated tests, build, CLI config smoke tests, invalid JSON smoke tests, help output checks, and Docker image build.
 - Committed and pushed authenticated TURN config and signaling deployment documentation to `develop`.
+- Added `docs/TURN_CREDENTIALS.md` with the short-lived TURN credential distribution strategy.
+- Re-evaluated the next release version and selected `v0.1.1` for the user-flow, throughput, signaling command, configurable ICE, and deployment-preparation work.
+- Validated the final documentation and release state with TypeScript checks, automated tests, and build.
 
 ## Pending Tasks
 
-- Plan TURN credential distribution for normal users without committing long-lived secrets.
-- Re-evaluate the next release version after the throughput work is validated.
+- Commit and push the TURN credential strategy.
+- Tag and publish `v0.1.1`.
 
 ## Known Issues
 
@@ -89,12 +92,12 @@ Phase 14 - Throughput and normal-user transfer flow.
 - The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` but not yet released.
 - Transfers between different homes still need a public signaling server URL reachable by both peers.
 - Some restrictive NAT/firewall combinations require TURN relay support; STUN alone is not guaranteed.
-- The project still needs a production TURN credential distribution strategy before public cross-network transfer can be considered user-ready.
+- The project still needs an implemented production TURN credential endpoint before public cross-network transfer can be considered fully user-ready.
 
 ## Next Actions
 
-- Design TURN credential distribution for public releases.
-- Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
+- Run final validation and publish `v0.1.1`.
+- After release, run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
 
 ## Decisions Already Made
 
@@ -127,6 +130,8 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Public STUN servers are enabled by default, but TURN relay support is still needed for reliable cross-network connectivity.
 - ICE server URLs are configurable through the `ice-servers` config key.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
+- Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
+- The next release version is `v0.1.1`.
 
 ## Files Changed in the Latest Step
 
@@ -140,6 +145,8 @@ Phase 14 - Throughput and normal-user transfer flow.
 - `docs/ROADMAP.md`
 - `docs/SIGNALING.md`
 - `docs/WEBRTC.md`
+- `docs/SECURITY.md`
+- `docs/TURN_CREDENTIALS.md`
 - `package.json`
 - `src/config/config.ts`
 - `tests/config.test.ts`

@@ -180,3 +180,5 @@ Uninstall by deleting the installed `a47` or `a47.exe` file from the chosen inst
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for the packaging plan.
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for public signaling and TURN deployment notes.
+
+See [docs/TURN_CREDENTIALS.md](docs/TURN_CREDENTIALS.md) for the planned short-lived TURN credential strategy.

@@ -16,8 +16,11 @@ A47 is designed so transferred files do not pass through the signaling server.
 - The MVP signaling server has no authentication.
 - Room names should be treated as shared secrets only for convenience, not strong security.
 - Additional application-level encryption is not implemented yet.
+- Public TURN relay usage needs a short-lived credential distribution service before it is user-ready.
 - `npm audit --omit=dev` reports a high-severity transitive vulnerability in `ip` through `werift`/`werift-ice`. npm currently reports no fix available, and `werift` is a required project dependency.
 
 ## Sensitive Data
 
 Do not commit credentials, tokens, private keys, `.env` files, or personal sensitive data.
+
+Do not commit real TURN credentials or embed them in release binaries. See [TURN_CREDENTIALS.md](TURN_CREDENTIALS.md) for the planned credential strategy.

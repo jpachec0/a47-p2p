@@ -69,12 +69,14 @@ a47 config set ice-servers '[{"urls":"stun:stun.l.google.com:19302"},{"urls":"tu
 
 Do not commit real TURN credentials. Use provider-managed secrets, short-lived credentials, or deployment-time configuration.
 
+See [TURN_CREDENTIALS.md](TURN_CREDENTIALS.md) for the release credential distribution strategy.
+
 ## Release-Ready Plan
 
 Before making public cross-network transfer the default, complete these tasks:
 
 - Deploy a public `wss://` signaling server.
 - Choose and deploy a TURN server or managed TURN provider.
-- Define how normal users receive TURN credentials without exposing long-lived secrets in the repository.
+- Implement the short-lived TURN credential flow described in [TURN_CREDENTIALS.md](TURN_CREDENTIALS.md).
 - Validate transfers between two different residential networks.
 - Measure large-file throughput through direct WebRTC and TURN-relayed paths.

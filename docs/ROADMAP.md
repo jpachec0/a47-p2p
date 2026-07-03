@@ -71,4 +71,21 @@ The current development focus is higher transfer throughput and a normal-user fl
 - Configurable ICE servers for STUN/TURN URL rollout.
 - Authenticated TURN entries in local config.
 - Docker-based public signaling deployment notes.
-- Public signaling and TURN credential distribution planning so users on different networks do not need to exchange IP addresses.
+- Public signaling and short-lived TURN credential distribution planning so users on different networks do not need to exchange IP addresses.
+
+## Release Decision
+
+The next release should be `v0.1.1`.
+
+It should include:
+
+- Installed `a47 signaling` command.
+- Receiver-generated room codes.
+- File launch and drag-and-drop send flow.
+- Receiver accept/reject prompt.
+- Transfer throughput improvements.
+- Configurable STUN/TURN ICE servers.
+- Public signaling Docker deployment notes.
+- TURN credential distribution plan.
+
+Public cross-network transfer without manual infrastructure is not complete until a production signaling URL and short-lived TURN credential endpoint are deployed.
