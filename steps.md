@@ -76,10 +76,10 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Added a Dockerfile and npm script for deploying the signaling server container.
 - Added `docs/DEPLOYMENT.md` with public signaling and TURN deployment requirements.
 - Validated authenticated TURN config and signaling deployment assets with TypeScript checks, automated tests, build, CLI config smoke tests, invalid JSON smoke tests, help output checks, and Docker image build.
+- Committed and pushed authenticated TURN config and signaling deployment documentation to `develop`.
 
 ## Pending Tasks
 
-- Commit and push authenticated TURN config and deployment documentation.
 - Plan TURN credential distribution for normal users without committing long-lived secrets.
 - Re-evaluate the next release version after the throughput work is validated.
 
@@ -93,7 +93,6 @@ Phase 14 - Throughput and normal-user transfer flow.
 
 ## Next Actions
 
-- Validate and push authenticated TURN config and signaling deployment assets.
 - Design TURN credential distribution for public releases.
 - Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
 
