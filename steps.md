@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 10 - Reliability, automated coverage, and release hardening after persistent configuration.
+Phase 14 - Release workflow and user-ready binary packaging.
 
 ## Completed Tasks
 
@@ -43,20 +43,23 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Added sender-side interruption coverage.
 - Added signaling room code validation and tests.
 - Documented room code rules and signaling room protection.
+- Added `@yao-pkg/pkg` binary packaging scripts for Windows, Linux, macOS x64, and macOS ARM64.
+- Added a GitHub Actions release workflow for `v*` tags.
+- Generated and locally validated the Linux release binary.
+- Updated installer scripts to use the project GitHub Releases URL by default.
 
 ## Pending Tasks
 
-- Create GitHub Actions release workflow.
-- Generate actual Windows, Linux, and macOS binary assets.
+- Cut the first tagged GitHub release.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- Release binaries are documented but not generated in this environment.
+- No official tagged GitHub release has been cut yet.
 
 ## Next Actions
 
-- Choose a binary packaging tool and add CI release automation.
+- Create and push the first version tag, for example `v0.1.0`, when ready to publish release assets.
 
 ## Decisions Already Made
 
@@ -76,17 +79,18 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Receiver-side interrupted transfers remove partial output files.
 - Sender-side interrupted transfers fail with a readable peer disconnected error.
 - Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens.
+- Release binaries are generated with `@yao-pkg/pkg`.
+- Pushing a `v*` tag runs the GitHub Actions release workflow and publishes release assets.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
-- `docs/CLI.md`
+- `.github/workflows/release.yml`
+- `.gitignore`
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `docs/SECURITY.md`
-- `docs/SIGNALING.md`
-- `docs/TRANSFER_PROTOCOL.md`
-- `src/signaling/rooms.ts`
-- `src/signaling/server.ts`
-- `tests/rooms.test.ts`
-- `tests/signaling.test.ts`
+- `README.md`
+- `install.sh`
+- `install.ps1`
+- `package.json`
+- `package-lock.json`

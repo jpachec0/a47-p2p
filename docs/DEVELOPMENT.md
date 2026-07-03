@@ -76,41 +76,21 @@ node dist/cli.js send ./example.txt --room test-room --server ws://localhost:474
 
 ## Packaging Plan
 
-Binary packaging is planned as release automation. This environment does not generate the final cross-platform binaries.
+Binary packaging uses `@yao-pkg/pkg` through npm scripts and GitHub Actions.
 
-Possible tools:
-
-- `pkg`
-- `nexe`
-- Node SEA
-- GitHub Releases
-- GitHub Actions matrix builds
-
-Future release assets:
-
-```txt
-a47-windows-x64.exe
-a47-linux-x64
-a47-macos-x64
-a47-macos-arm64
-install.sh
-install.ps1
-```
-
-The exact binary generation command will be finalized after validating the MVP and choosing the packaging tool.
-
-## Candidate Binary Commands
-
-If using `pkg`, the future commands would be similar to:
+Build all release assets locally:
 
 ```bash
-pkg dist/cli.js --targets node20-win-x64 --output a47-windows-x64.exe
-pkg dist/cli.js --targets node20-linux-x64 --output a47-linux-x64
-pkg dist/cli.js --targets node20-macos-x64 --output a47-macos-x64
-pkg dist/cli.js --targets node20-macos-arm64 --output a47-macos-arm64
+npm run package:binaries
 ```
 
-Release automation should upload:
+Run the full local release preparation path:
+
+```bash
+npm run release:prepare
+```
+
+Expected release assets:
 
 ```txt
 a47-windows-x64.exe
@@ -119,6 +99,26 @@ a47-macos-x64
 a47-macos-arm64
 install.sh
 install.ps1
+```
+
+The GitHub Actions workflow in `.github/workflows/release.yml` runs checks, tests, binary packaging, Linux binary smoke validation, artifact upload, and GitHub Release publication for `v*` tags.
+
+## Binary Commands
+
+The package scripts generate binaries with these targets:
+
+```bash
+npm run package:windows
+npm run package:linux
+npm run package:macos:x64
+npm run package:macos:arm64
+```
+
+Create an official GitHub release by pushing a version tag:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 Linux/macOS uninstall:

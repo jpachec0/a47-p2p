@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build release assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run quality checks
+        run: |
+          npm run check
+          npm test
+
+      - name: Build release binaries
+        run: npm run package:binaries
+
+      - name: Copy install scripts
+        run: |
+          cp install.sh release/install.sh
+          cp install.ps1 release/install.ps1
+
+      - name: Validate Linux binary
+        run: |
+          ./release/a47-linux-x64 help
+          ./release/a47-linux-x64 version
+
+      - name: Upload release artifact bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: a47-release-assets
+          path: release/*
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" release/* \
+            --title "A47 ${GITHUB_REF_NAME}" \
+            --notes "A47 P2P release ${GITHUB_REF_NAME}. The signaling server is only used to exchange connection metadata. Files are transferred through WebRTC DataChannels and are not uploaded to the signaling server."

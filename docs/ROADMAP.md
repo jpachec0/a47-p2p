@@ -58,4 +58,4 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 10 have an MVP implementation, including room code validation, signaling and WebRTC transfer integration tests, hash mismatch cleanup coverage, interrupted receive cleanup coverage, interrupted sender handling, and opt-in debug stack traces. Phases 11 through 14 are partially covered through documentation, validation, and installer templates.
+Phases 1 through 14 have an MVP implementation path. Release scripts and GitHub Actions can generate Windows, Linux, and macOS assets; the remaining release action is cutting the first version tag.

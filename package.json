@@ -17,12 +17,18 @@
   "scripts": {
     "build": "tsc",
     "build:production": "npm run build",
+    "package:binaries": "npm run build && npm run package:windows && npm run package:linux && npm run package:macos:x64 && npm run package:macos:arm64",
+    "package:windows": "pkg dist/cli.js --targets node22-win-x64 --output release/a47-windows-x64.exe --public --public-packages \"*\" --no-bytecode",
+    "package:linux": "pkg dist/cli.js --targets node22-linux-x64 --output release/a47-linux-x64 --public --public-packages \"*\" --no-bytecode",
+    "package:macos:x64": "pkg dist/cli.js --targets node22-macos-x64 --output release/a47-macos-x64 --public --public-packages \"*\" --no-bytecode --no-signature",
+    "package:macos:arm64": "pkg dist/cli.js --targets node22-macos-arm64 --output release/a47-macos-arm64 --public --public-packages \"*\" --no-bytecode --no-signature",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
     "signaling": "tsx src/signaling/server.ts",
     "signaling:dist": "node dist/signaling/server.js",
     "check": "tsc --noEmit",
     "test": "vitest run",
+    "release:prepare": "npm run check && npm test && npm run package:binaries",
     "prepack": "npm run build"
   },
   "keywords": [
@@ -44,6 +50,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/ws": "^8.5.13",
+    "@yao-pkg/pkg": "^6.21.0",
     "tsx": "^4.20.0",
     "typescript": "^5.8.0",
     "vitest": "^3.2.0"
