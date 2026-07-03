@@ -35,9 +35,10 @@ The current wrapper exposes:
 createSenderPeer(options)
 createReceiverPeer(options)
 peer.onData(callback)
+peer.onClose(callback)
 peer.send(payload)
 peer.waitUntilOpen()
 peer.close()
 ```
 
-The wrapper relays ICE candidates through the signaling client and keeps `werift` internals isolated from command and transfer modules.
+The wrapper relays ICE candidates through the signaling client and keeps `werift` internals isolated from command and transfer modules. The transfer receiver uses `peer.onClose(callback)` to detect interrupted transfers and clean up partial output files.

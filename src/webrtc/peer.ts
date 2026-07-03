@@ -8,6 +8,7 @@ export type { DataChannelPayload } from "./data-channel.js";
 
 export interface A47Peer {
   onData(callback: (payload: DataChannelPayload) => void): void;
+  onClose(callback: () => void): void;
   send(payload: DataChannelPayload): void;
   waitUntilOpen(): Promise<void>;
   close(): Promise<void>;
@@ -27,6 +28,14 @@ class WeriftA47Peer implements A47Peer {
 
   onData(callback: (payload: DataChannelPayload) => void): void {
     this.dataChannel.onMessage.subscribe((message) => callback(message));
+  }
+
+  onClose(callback: () => void): void {
+    this.dataChannel.stateChange.subscribe((state) => {
+      if (state === "closed") {
+        callback();
+      }
+    });
   }
 
   send(payload: DataChannelPayload): void {

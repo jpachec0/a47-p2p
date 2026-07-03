@@ -37,10 +37,12 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Added error utility tests for readable and debug error output.
 - Added hash mismatch failure-path coverage that verifies failed receiver output cleanup.
 - Removed stale known-issue text about the project directory being empty.
+- Added receiver interruption handling through the peer close hook.
+- Added interrupted receive failure-path coverage that verifies partial output cleanup.
 
 ## Pending Tasks
 
-- Add transfer interruption failure-path tests.
+- Add sender-side transfer failure-path tests.
 - Add authentication or stronger room protection for signaling.
 - Create GitHub Actions release workflow.
 - Generate actual Windows, Linux, and macOS binary assets.
@@ -52,7 +54,7 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 
 ## Next Actions
 
-- Add transfer interruption tests.
+- Add sender-side interruption tests.
 - Choose a binary packaging tool and add CI release automation.
 
 ## Decisions Already Made
@@ -70,6 +72,7 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Persistent configuration is stored at `.a47/config.json` under the user's home directory.
 - The `--server` command option overrides the saved default server for that single command.
 - Raw stack traces are hidden by default and require `--debug` or `A47_DEBUG=1`.
+- Receiver-side interrupted transfers remove partial output files.
 
 ## Files Changed in the Latest Step
 
@@ -77,4 +80,7 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
 - `docs/TRANSFER_PROTOCOL.md`
+- `docs/WEBRTC.md`
+- `src/transfer/receiver.ts`
+- `src/webrtc/peer.ts`
 - `tests/transfer-failure.test.ts`

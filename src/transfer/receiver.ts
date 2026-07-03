@@ -26,7 +26,29 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
     let outputPath: string | undefined;
     let writeStream: WriteStream | undefined;
     let receivedBytes = 0;
+    let isSettled = false;
     const hash = createHash("sha256");
+
+    const rejectTransfer = async (error: Error): Promise<void> => {
+      if (isSettled) {
+        return;
+      }
+
+      isSettled = true;
+      writeStream?.destroy();
+
+      if (outputPath) {
+        await unlink(outputPath).catch(() => undefined);
+      }
+
+      reject(error);
+    };
+
+    options.peer.onClose(() => {
+      if (!isSettled) {
+        void rejectTransfer(new Error("Transfer interrupted because the peer disconnected."));
+      }
+    });
 
     options.peer.onData((payload) => {
       void (async () => {
@@ -68,11 +90,11 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
                 process.stdout.write("\n");
 
                 if (!ok) {
-                  await unlink(completedOutputPath).catch(() => undefined);
-                  reject(new Error("SHA-256 verification failed. The received file was removed."));
+                  await rejectTransfer(new Error("SHA-256 verification failed. The received file was removed."));
                   return;
                 }
 
+                isSettled = true;
                 console.log("Transfer completed and SHA-256 hash verified.");
                 resolve(completedOutputPath);
               });
@@ -97,7 +119,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
         } catch (error) {
           const message = error instanceof Error ? error.message : "Receive failed.";
           options.peer.send(encodeTransferMessage({ type: "file-error", message }));
-          reject(error);
+          await rejectTransfer(error instanceof Error ? error : new Error(message));
         }
       })();
     });

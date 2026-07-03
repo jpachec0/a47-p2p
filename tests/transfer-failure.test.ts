@@ -36,11 +36,37 @@ describe("transfer failure handling", () => {
     expect(peer.sentMessages.some((message) => message.includes('"type":"hash-result"'))).toBe(true);
     expect(peer.sentMessages.some((message) => message.includes('"ok":false'))).toBe(true);
   });
+
+  it("rejects an interrupted receive and removes the partial output file", async () => {
+    const outputDirectory = await mkdtemp(path.join(os.tmpdir(), "a47-interrupted-transfer-"));
+    const peer = new FakePeer();
+    const receivePromise = receiveFile({ outputDirectory, peer });
+    await peer.waitForDataHandler();
+
+    peer.emit(
+      encodeTransferMessage({
+        type: "file-meta",
+        protocolVersion: TRANSFER_PROTOCOL_VERSION,
+        fileName: "interrupted.txt",
+        fileSize: 1024,
+        sha256: "not-finished"
+      })
+    );
+    await peer.waitForSentMessage((message) => message.includes('"type":"receiver-accepted"'));
+
+    peer.emit(Buffer.from("partial data"));
+    await waitForAsyncReceiverWork();
+    peer.emitClose();
+
+    await expect(receivePromise).rejects.toThrow("Transfer interrupted because the peer disconnected.");
+    await expect(readdir(outputDirectory)).resolves.toEqual([]);
+  });
 });
 
 class FakePeer implements A47Peer {
   readonly sentMessages: string[] = [];
   private dataHandler?: (payload: DataChannelPayload) => void;
+  private closeHandler?: () => void;
   private resolveDataHandlerReady?: () => void;
   private readonly dataHandlerReady = new Promise<void>((resolve) => {
     this.resolveDataHandlerReady = resolve;
@@ -53,6 +79,10 @@ class FakePeer implements A47Peer {
   onData(callback: (payload: DataChannelPayload) => void): void {
     this.dataHandler = callback;
     this.resolveDataHandlerReady?.();
+  }
+
+  onClose(callback: () => void): void {
+    this.closeHandler = callback;
   }
 
   send(payload: DataChannelPayload): void {
@@ -83,6 +113,10 @@ class FakePeer implements A47Peer {
     }
 
     this.dataHandler(payload);
+  }
+
+  emitClose(): void {
+    this.closeHandler?.();
   }
 
   waitForDataHandler(): Promise<void> {
