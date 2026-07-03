@@ -25,6 +25,8 @@ Use a temporary home directory when testing config commands without touching you
 ```bash
 HOME=/tmp/a47-config-validation node dist/cli.js config set server ws://localhost:5757
 HOME=/tmp/a47-config-validation node dist/cli.js config get server
+HOME=/tmp/a47-config-validation node dist/cli.js config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
+HOME=/tmp/a47-config-validation node dist/cli.js config get ice-servers
 ```
 
 ## Run the Signaling Server
@@ -56,6 +58,8 @@ npm test
 The test suite includes unit tests for config, path handling, error output, room code validation, and transfer protocol helpers, plus integration tests for the signaling relay, room protection rules, hash mismatch cleanup, interrupted receive cleanup, interrupted sender handling, and a small WebRTC DataChannel file transfer.
 
 Performance-sensitive transfer behavior is covered by code review and local smoke tests. When validating throughput, use large files, avoid measuring the initial SHA-256 preflight as network transfer time, and compare against the available WebRTC path. The application default is a 256 KiB chunk size with a larger DataChannel buffer window.
+
+For cross-network validation, use a public `wss://` signaling URL and a configured ICE server list. STUN may work for many home networks, but reliable validation across restrictive networks requires TURN credentials.
 
 ## Debugging
 

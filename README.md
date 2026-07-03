@@ -67,6 +67,8 @@ a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
 a47 config get server
 a47 config set server ws://localhost:4747
+a47 config get ice-servers
+a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
 a47 --debug send ./file.zip --room my-room
 ```
 
@@ -112,7 +114,7 @@ a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
 
 If you see `Unable to connect to signaling server` or `connection refused`, the signaling server is not running at that URL, the wrong host was used, or a firewall is blocking the port.
 
-For transfers between different homes or networks without typing an IP address, A47 needs a public WebSocket signaling server and NAT traversal support. The CLI now includes public STUN servers for WebRTC candidate discovery, but some restrictive networks will still require a TURN relay.
+For transfers between different homes or networks without typing an IP address, A47 needs a public WebSocket signaling server and NAT traversal support. The CLI includes public STUN servers for WebRTC candidate discovery and lets users configure custom STUN/TURN URLs through `a47 config set ice-servers`. Some restrictive networks will still require a TURN relay with credentials.
 
 ## Architecture Summary
 
@@ -131,7 +133,7 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 - Single-file transfer is the initial target.
 - Folder transfer is planned for a future version.
 - The signaling server is intentionally simple and does not provide authentication yet.
-- Configuration currently supports `server` and `chunk-size`.
+- Configuration currently supports `server`, `chunk-size`, and `ice-servers`.
 - The default transfer chunk size is 256 KiB. Throughput is intended to be limited by the users' network and WebRTC path, not by artificial CLI throttling.
 - Release binaries are generated with `@yao-pkg/pkg` and published by the GitHub Actions release workflow when a `v*` tag is pushed.
 - `npm audit --omit=dev` currently reports a high-severity transitive vulnerability in `ip` through `werift`/`werift-ice`; npm reports no fix available.

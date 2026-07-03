@@ -88,6 +88,15 @@ Connection refused errors mean no signaling server is reachable at the configure
 
 For users on different networks who should not type IP addresses, A47 needs a public signaling server URL that both peers can reach. The signaling server still only relays WebRTC metadata and never receives file contents.
 
+The signaling URL and ICE server list are separate settings:
+
+```bash
+a47 config set server wss://signal.example.com
+a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
+```
+
+The public signaling server solves discovery and room negotiation. STUN/TURN servers solve WebRTC NAT traversal.
+
 ## Test Coverage
 
 The automated test suite starts the signaling server on an ephemeral port, verifies room joins, confirms signaling message relay between two peers, checks that a third peer is rejected from a two-peer MVP room, and verifies room code validation.

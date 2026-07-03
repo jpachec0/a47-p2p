@@ -10,20 +10,32 @@ export const DEFAULT_CHUNK_SIZE_BYTES = 256 * 1024;
 export const DEFAULT_OUTPUT_DIRECTORY = ".";
 export const CONFIG_DIRECTORY_NAME = ".a47";
 export const CONFIG_FILE_NAME = "config.json";
+export const DEFAULT_ICE_SERVERS: IceServerConfig[] = [
+  { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" }
+];
+
+export interface IceServerConfig {
+  urls: string;
+  username?: string;
+  credential?: string;
+}
 
 export interface A47Config {
   signalingServerUrl: string;
   chunkSizeBytes: number;
+  iceServers: IceServerConfig[];
 }
 
 export function getDefaultConfig(): A47Config {
   return {
     signalingServerUrl: DEFAULT_SIGNALING_SERVER_URL,
-    chunkSizeBytes: DEFAULT_CHUNK_SIZE_BYTES
+    chunkSizeBytes: DEFAULT_CHUNK_SIZE_BYTES,
+    iceServers: DEFAULT_ICE_SERVERS
   };
 }
 
-export type ConfigKey = "server" | "chunk-size";
+export type ConfigKey = "server" | "chunk-size" | "ice-servers";
 
 export function getConfigFilePath(): string {
   return path.join(os.homedir(), CONFIG_DIRECTORY_NAME, CONFIG_FILE_NAME);
@@ -39,7 +51,8 @@ export async function loadConfig(): Promise<A47Config> {
 
     return {
       signalingServerUrl: parsedConfig.signalingServerUrl ?? defaultConfig.signalingServerUrl,
-      chunkSizeBytes: parsedConfig.chunkSizeBytes ?? defaultConfig.chunkSizeBytes
+      chunkSizeBytes: parsedConfig.chunkSizeBytes ?? defaultConfig.chunkSizeBytes,
+      iceServers: normalizeIceServers(parsedConfig.iceServers ?? defaultConfig.iceServers)
     };
   } catch (error) {
     if (isMissingFileError(error)) {
@@ -61,6 +74,10 @@ export function getConfigValue(config: A47Config, key: ConfigKey): string {
     return config.signalingServerUrl;
   }
 
+  if (key === "ice-servers") {
+    return config.iceServers.map((iceServer) => iceServer.urls).join(",");
+  }
+
   return String(config.chunkSizeBytes);
 }
 
@@ -69,6 +86,13 @@ export function setConfigValue(config: A47Config, key: ConfigKey, value: string)
     return {
       ...config,
       signalingServerUrl: normalizeServerUrl(value)
+    };
+  }
+
+  if (key === "ice-servers") {
+    return {
+      ...config,
+      iceServers: parseIceServerUrls(value)
     };
   }
 
@@ -84,11 +108,11 @@ export function setConfigValue(config: A47Config, key: ConfigKey, value: string)
 }
 
 export function parseConfigKey(key: string): ConfigKey {
-  if (key === "server" || key === "chunk-size") {
+  if (key === "server" || key === "chunk-size" || key === "ice-servers") {
     return key;
   }
 
-  throw new A47Error("Unknown config key. Supported keys: server, chunk-size.");
+  throw new A47Error("Unknown config key. Supported keys: server, chunk-size, ice-servers.");
 }
 
 function normalizeServerUrl(serverUrl: string): string {
@@ -99,6 +123,45 @@ function normalizeServerUrl(serverUrl: string): string {
   }
 
   return trimmedServerUrl;
+}
+
+function parseIceServerUrls(value: string): IceServerConfig[] {
+  const iceServers = value
+    .split(",")
+    .map((url) => url.trim())
+    .filter(Boolean)
+    .map((url) => ({ urls: normalizeIceServerUrl(url) }));
+
+  if (iceServers.length === 0) {
+    throw new A47Error("ICE servers must include at least one STUN, TURN, or TURNS URL.");
+  }
+
+  return iceServers;
+}
+
+function normalizeIceServers(iceServers: IceServerConfig[]): IceServerConfig[] {
+  if (!Array.isArray(iceServers) || iceServers.length === 0) {
+    return DEFAULT_ICE_SERVERS;
+  }
+
+  return iceServers.map((iceServer) => ({
+    ...iceServer,
+    urls: normalizeIceServerUrl(iceServer.urls)
+  }));
+}
+
+function normalizeIceServerUrl(url: string): string {
+  const trimmedUrl = url.trim();
+
+  if (
+    !trimmedUrl.startsWith("stun:") &&
+    !trimmedUrl.startsWith("turn:") &&
+    !trimmedUrl.startsWith("turns:")
+  ) {
+    throw new A47Error("ICE server URLs must start with stun:, turn:, or turns:.");
+  }
+
+  return trimmedUrl;
 }
 
 function isMissingFileError(error: unknown): boolean {

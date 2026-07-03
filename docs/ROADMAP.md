@@ -68,4 +68,5 @@ The current development focus is higher transfer throughput and a normal-user fl
 - File launch and drag-and-drop send flow for packaged executables.
 - Receiver acceptance before writing file bytes.
 - Larger chunks, larger DataChannel buffering, and throttled terminal progress output.
-- Public signaling and TURN relay planning so users on different networks do not need to exchange IP addresses.
+- Configurable ICE servers for STUN/TURN URL rollout.
+- Public signaling and authenticated TURN relay planning so users on different networks do not need to exchange IP addresses.

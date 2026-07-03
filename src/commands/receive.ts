@@ -29,7 +29,7 @@ export async function runReceiveCommand(options: ReceiveCommandOptions): Promise
     console.log(`Room code: ${room}`);
     console.log("Waiting for sender...");
 
-    const peer = await createReceiverPeer({ signalingClient });
+    const peer = await createReceiverPeer({ iceServers: config.iceServers, signalingClient });
     const outputPath = await receiveFile({
       acceptFile: promptTransferAcceptance,
       outputDirectory,

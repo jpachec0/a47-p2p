@@ -1,15 +1,11 @@
 import { RTCPeerConnection, type RTCDataChannel, type RTCIceCandidate } from "werift";
 
+import { DEFAULT_ICE_SERVERS, type IceServerConfig } from "../config/config.js";
 import { SignalingClient } from "../signaling/client.js";
 import type { AnswerMessage, OfferMessage, SignalingMessage } from "../signaling/messages.js";
 import { A47Error } from "../utils/errors.js";
 import { waitForDataChannelOpen, type DataChannelPayload } from "./data-channel.js";
 export type { DataChannelPayload } from "./data-channel.js";
-
-const DEFAULT_ICE_SERVERS = [
-  { urls: "stun:stun.l.google.com:19302" },
-  { urls: "stun:stun1.l.google.com:19302" }
-];
 
 export interface A47Peer {
   onData(callback: (payload: DataChannelPayload) => void): void;
@@ -22,6 +18,7 @@ export interface A47Peer {
 }
 
 export interface PeerOptions {
+  iceServers?: IceServerConfig[];
   signalingClient: SignalingClient;
 }
 
@@ -70,7 +67,7 @@ class WeriftA47Peer implements A47Peer {
 }
 
 export async function createSenderPeer(options: PeerOptions): Promise<A47Peer> {
-  const peerConnection = createPeerConnection(options.signalingClient);
+  const peerConnection = createPeerConnection(options);
   const dataChannel = peerConnection.createDataChannel("a47-file-transfer", {
     ordered: true
   });
@@ -107,7 +104,7 @@ export async function createSenderPeer(options: PeerOptions): Promise<A47Peer> {
 }
 
 export async function createReceiverPeer(options: PeerOptions): Promise<A47Peer> {
-  const peerConnection = createPeerConnection(options.signalingClient);
+  const peerConnection = createPeerConnection(options);
   attachSignalingHandlers(peerConnection, options.signalingClient);
 
   const offerMessage = await options.signalingClient.waitForMessage(
@@ -141,14 +138,14 @@ export async function createReceiverPeer(options: PeerOptions): Promise<A47Peer>
   return new WeriftA47Peer(peerConnection, dataChannel);
 }
 
-function createPeerConnection(signalingClient: SignalingClient): RTCPeerConnection {
+function createPeerConnection(options: PeerOptions): RTCPeerConnection {
   const peerConnection = new RTCPeerConnection({
-    iceServers: DEFAULT_ICE_SERVERS
+    iceServers: options.iceServers ?? DEFAULT_ICE_SERVERS
   });
 
   peerConnection.onIceCandidate.subscribe((candidate) => {
     if (candidate) {
-      signalingClient.send({ type: "ice-candidate", candidate });
+      options.signalingClient.send({ type: "ice-candidate", candidate });
     }
   });
 

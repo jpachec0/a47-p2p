@@ -73,7 +73,7 @@ async function main(): Promise<void> {
   configCommand
     .command("get")
     .description("Show a config value.")
-    .argument("<key>", "Config key. Supported keys: server, chunk-size.")
+    .argument("<key>", "Config key. Supported keys: server, chunk-size, ice-servers.")
     .action(async (key: string) => {
       await showConfigValue(key);
     });
@@ -81,7 +81,7 @@ async function main(): Promise<void> {
   configCommand
     .command("set")
     .description("Update a config value.")
-    .argument("<key>", "Config key. Supported keys: server, chunk-size.")
+    .argument("<key>", "Config key. Supported keys: server, chunk-size, ice-servers.")
     .argument("<value>", "New config value.")
     .action(async (key: string, value: string) => {
       await updateConfigValue(key, value);

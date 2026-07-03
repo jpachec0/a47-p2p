@@ -29,7 +29,7 @@ export async function runSendCommand(filePath: string, options: SendCommandOptio
     await signalingClient.join(room);
     console.log(`Joined room: ${room}`);
 
-    const peer = await createSenderPeer({ signalingClient });
+    const peer = await createSenderPeer({ iceServers: config.iceServers, signalingClient });
     await sendFile({ filePath: resolvedFilePath, peer, chunkSizeBytes: config.chunkSizeBytes });
     await peer.close();
   } finally {

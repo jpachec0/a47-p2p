@@ -67,10 +67,15 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Updated documentation for the new room, file launch, acceptance, throughput, STUN, and public signaling requirements.
 - Validated the throughput and normal-user flow changes with TypeScript checks, automated tests, build, CLI help/version/error smoke tests, and a compiled signaling server smoke test.
 - Committed and pushed the throughput and normal-user flow changes to `develop`.
+- Added configurable ICE server support through `a47 config get ice-servers` and `a47 config set ice-servers`.
+- Updated sender and receiver peer creation to use configured STUN/TURN URLs instead of only hardcoded defaults.
+- Documented the separation between public signaling for discovery and ICE/STUN/TURN for NAT traversal.
+- Validated configurable ICE server support with TypeScript checks, automated tests, build, config smoke tests, invalid ICE URL smoke tests, and help output checks.
 
 ## Pending Tasks
 
-- Plan public signaling server hosting and TURN relay support so users on different networks do not need to exchange IP addresses.
+- Commit and push configurable ICE server support to `develop`.
+- Plan public signaling server hosting and authenticated TURN relay support so users on different networks do not need to exchange IP addresses.
 - Re-evaluate the next release version after the throughput work is validated.
 
 ## Known Issues
@@ -78,11 +83,12 @@ Phase 14 - Throughput and normal-user transfer flow.
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
 - The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` but not yet released.
 - Transfers between different homes still need a public signaling server URL reachable by both peers.
-- Some restrictive NAT/firewall combinations will still require TURN relay support; STUN alone is not guaranteed.
+- Some restrictive NAT/firewall combinations will still require authenticated TURN relay support; STUN alone is not guaranteed.
 
 ## Next Actions
 
-- Design the public signaling and TURN deployment path.
+- Push configurable ICE server support.
+- Design the public signaling and authenticated TURN deployment path.
 - Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
 
 ## Decisions Already Made
@@ -114,6 +120,7 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Opening the CLI with a file path starts the send flow for that file.
 - The default chunk size is 256 KiB.
 - Public STUN servers are enabled by default, but TURN relay support is still needed for reliable cross-network connectivity.
+- ICE server URLs are configurable through the `ice-servers` config key.
 
 ## Files Changed in the Latest Step
 
@@ -124,18 +131,12 @@ Phase 14 - Throughput and normal-user transfer flow.
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
 - `docs/SIGNALING.md`
+- `docs/WEBRTC.md`
 - `src/cli.ts`
 - `src/commands/help.ts`
 - `src/commands/interactive.ts`
-- `src/commands/launch-file.ts`
 - `src/commands/receive.ts`
 - `src/commands/send.ts`
 - `src/config/config.ts`
-- `src/signaling/rooms.ts`
-- `src/transfer/progress.ts`
-- `src/transfer/receiver.ts`
-- `src/transfer/sender.ts`
-- `src/utils/paths.ts`
 - `src/webrtc/peer.ts`
-- `tests/paths.test.ts`
-- `tests/rooms.test.ts`
+- `tests/config.test.ts`

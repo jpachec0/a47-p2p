@@ -23,9 +23,30 @@ describe("config", () => {
   it("parses supported config keys", () => {
     expect(parseConfigKey("server")).toBe("server");
     expect(parseConfigKey("chunk-size")).toBe("chunk-size");
+    expect(parseConfigKey("ice-servers")).toBe("ice-servers");
   });
 
   it("rejects unsupported config keys", () => {
-    expect(() => parseConfigKey("unknown")).toThrow("Unknown config key.");
+    expect(() => parseConfigKey("unknown")).toThrow(
+      "Unknown config key. Supported keys: server, chunk-size, ice-servers."
+    );
+  });
+
+  it("updates ICE server URLs", () => {
+    const updatedConfig = setConfigValue(
+      getDefaultConfig(),
+      "ice-servers",
+      "stun:stun.example.test:3478,turn:turn.example.test:3478"
+    );
+
+    expect(getConfigValue(updatedConfig, "ice-servers")).toBe(
+      "stun:stun.example.test:3478,turn:turn.example.test:3478"
+    );
+  });
+
+  it("rejects unsupported ICE server URL protocols", () => {
+    expect(() => setConfigValue(getDefaultConfig(), "ice-servers", "https://example.test")).toThrow(
+      "ICE server URLs must start with stun:, turn:, or turns:."
+    );
   });
 });

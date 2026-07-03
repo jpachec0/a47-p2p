@@ -17,6 +17,8 @@ a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
 a47 config get server
 a47 config set server ws://localhost:4747
+a47 config get ice-servers
+a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
 a47 --debug send ./file.zip --room my-room
 ```
 
@@ -80,6 +82,7 @@ If a command prints `Unable to connect to signaling server`, start `a47 signalin
 - Default signaling server: `ws://localhost:4747`
 - Default output directory: current working directory
 - Default chunk size: 256 KiB
+- Default ICE servers: `stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302`
 
 ## Configuration
 
@@ -89,6 +92,7 @@ Supported keys:
 
 - `server`: default signaling server URL. Values must start with `ws://` or `wss://`.
 - `chunk-size`: default transfer chunk size in bytes.
+- `ice-servers`: comma-separated STUN, TURN, or TURNS URLs used by WebRTC ICE candidate gathering.
 
 Examples:
 
@@ -97,6 +101,8 @@ a47 config get server
 a47 config set server ws://localhost:4747
 a47 config get chunk-size
 a47 config set chunk-size 262144
+a47 config get ice-servers
+a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
 ```
 
 Command-line options such as `--server` override saved defaults for a single command.

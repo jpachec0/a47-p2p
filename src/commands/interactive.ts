@@ -94,8 +94,9 @@ async function runSettingsFlow(): Promise<void> {
   const config = await loadConfig();
   console.log(`Default signaling server: ${config.signalingServerUrl}`);
   console.log(`Default chunk size: ${config.chunkSizeBytes} bytes`);
+  console.log(`ICE servers: ${config.iceServers.map((iceServer) => iceServer.urls).join(",")}`);
   console.log("");
-  console.log("Use a47 config get server or a47 config set server <url> to manage defaults.");
+  console.log("Use a47 config get <key> or a47 config set <key> <value> to manage defaults.");
 
   await waitForEnter();
 }

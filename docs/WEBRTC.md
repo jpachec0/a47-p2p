@@ -31,7 +31,14 @@ The transfer layer should use a small wrapper API instead of depending directly 
 
 A47 configures public STUN servers by default so peers can discover usable WebRTC candidates outside a single LAN in many home-network cases.
 
-STUN does not guarantee connectivity for every NAT or firewall. Restrictive networks may require a TURN relay. TURN relay support is planned because it is the correct fallback for users who need transfers between different homes without manually exchanging IP addresses.
+The default ICE server list is configurable:
+
+```bash
+a47 config get ice-servers
+a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
+```
+
+STUN does not guarantee connectivity for every NAT or firewall. Restrictive networks may require a TURN relay. The current CLI accepts TURN URLs in the ICE server list, but authenticated TURN deployment still needs a release-ready credential strategy.
 
 ## Current Wrapper API
 

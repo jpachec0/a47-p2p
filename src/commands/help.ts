@@ -57,7 +57,7 @@ Signaling server:
   For different computers, run the server on one machine and use ws://<server-ip>:4747.
 
 Configuration:
-  Supported keys: server, chunk-size.
+  Supported keys: server, chunk-size, ice-servers.
 
 Debugging:
   Use --debug or A47_DEBUG=1 to print raw stack traces for troubleshooting.
