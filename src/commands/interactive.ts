@@ -65,7 +65,6 @@ async function runReceiveFlow(): Promise<void> {
   renderHeader();
   renderSectionTitle("Receive file");
 
-  const room = await input({ message: "Room code" });
   const output = await input({
     message: "Output directory",
     default: DEFAULT_OUTPUT_DIRECTORY
@@ -77,7 +76,7 @@ async function runReceiveFlow(): Promise<void> {
   });
 
   await runWithPause(async () => {
-    await runReceiveCommand({ room, output, server });
+    await runReceiveCommand({ output, server });
   });
 }
 

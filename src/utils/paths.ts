@@ -5,7 +5,7 @@ import { constants } from "node:fs";
 import { A47Error } from "./errors.js";
 
 export async function resolveExistingFile(filePath: string): Promise<string> {
-  const resolvedPath = path.resolve(filePath);
+  const resolvedPath = await findExistingFilePath(filePath);
 
   try {
     const fileStat = await stat(resolvedPath);
@@ -27,6 +27,36 @@ export async function resolveExistingFile(filePath: string): Promise<string> {
 
     throw new A47Error(`File not found or not readable: ${resolvedPath}`);
   }
+}
+
+async function findExistingFilePath(filePath: string): Promise<string> {
+  const candidatePaths = getInputFileCandidates(filePath);
+
+  for (const candidatePath of candidatePaths) {
+    if (await pathExists(candidatePath)) {
+      return candidatePath;
+    }
+  }
+
+  return candidatePaths[0] ?? path.resolve(filePath);
+}
+
+function getInputFileCandidates(filePath: string): string[] {
+  const trimmedFilePath = filePath.trim();
+  const candidates = [path.resolve(trimmedFilePath)];
+  const executableDirectory = path.dirname(process.execPath);
+
+  if (!path.isAbsolute(trimmedFilePath)) {
+    candidates.push(path.resolve(executableDirectory, trimmedFilePath));
+  }
+
+  if (trimmedFilePath.startsWith("/") || trimmedFilePath.startsWith("\\")) {
+    const relativeFilePath = trimmedFilePath.replace(/^[/\\]+/, "");
+    candidates.push(path.resolve(process.cwd(), relativeFilePath));
+    candidates.push(path.resolve(executableDirectory, relativeFilePath));
+  }
+
+  return [...new Set(candidates)];
 }
 
 export async function resolveOutputDirectory(outputDirectory: string): Promise<string> {

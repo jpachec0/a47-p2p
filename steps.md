@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 14 - Patch release for user-run signaling server.
+Phase 14 - Throughput and normal-user transfer flow.
 
 ## Completed Tasks
 
@@ -57,21 +57,33 @@ Phase 14 - Patch release for user-run signaling server.
 - Updated user and developer documentation for local, LAN, and connection-refused signaling scenarios.
 - Bumped the package version to `0.1.1` for the patch release.
 - Ran TypeScript checks, automated tests, build, and compiled CLI smoke validation for the `v0.1.1` patch.
+- Started the next development focus after user testing showed poor LAN throughput and too much manual IP configuration.
+- Increased the default chunk size from 64 KiB to 256 KiB.
+- Increased the sender DataChannel buffer window and throttled terminal progress rendering to avoid artificial CLI-side transfer bottlenecks.
+- Added receiver-generated room codes using the `A47-XXXXXX` format.
+- Added a file launch flow so opening the executable with a file path, including drag-and-drop on packaged executables, starts the send flow.
+- Added receiver-side accept/reject prompting after file metadata arrives and before bytes are written.
+- Added default public STUN servers for WebRTC candidate discovery.
+- Updated documentation for the new room, file launch, acceptance, throughput, STUN, and public signaling requirements.
+- Validated the throughput and normal-user flow changes with TypeScript checks, automated tests, build, CLI help/version/error smoke tests, and a compiled signaling server smoke test.
 
 ## Pending Tasks
 
-- Commit and push the signaling command fix to `develop`.
-- Tag and publish `v0.1.1` release assets.
+- Commit and push the throughput and normal-user flow changes to `develop`.
+- Plan public signaling server hosting and TURN relay support so users on different networks do not need to exchange IP addresses.
+- Re-evaluate the next release version after the throughput work is validated.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` and will be released as `v0.1.1`.
+- The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` but not yet released.
+- Transfers between different homes still need a public signaling server URL reachable by both peers.
+- Some restrictive NAT/firewall combinations will still require TURN relay support; STUN alone is not guaranteed.
 
 ## Next Actions
 
-- Push the patch commit and publish the `v0.1.1` tag.
-- Verify the GitHub Actions release assets.
+- Commit and push the latest throughput and flow changes.
+- Design the public signaling and TURN deployment path.
 
 ## Decisions Already Made
 
@@ -83,7 +95,7 @@ Phase 14 - Patch release for user-run signaling server.
 - All project text, code comments, CLI messages, and documentation must be in English.
 - Single-file transfer is supported first; folder transfer remains planned.
 - DataChannel control messages are JSON strings and file chunks are binary messages.
-- The default chunk size is 64 KiB.
+- The default chunk size is 256 KiB.
 - Future user release assets should use the names documented in README and `docs/DEVELOPMENT.md`.
 - Persistent configuration is stored at `.a47/config.json` under the user's home directory.
 - The `--server` command option overrides the saved default server for that single command.
@@ -97,7 +109,11 @@ Phase 14 - Patch release for user-run signaling server.
 - The `v0.1.0` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.0`.
 - Installed users can run the signaling server with `a47 signaling --port 4747`.
 - LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
-- The next patch release tag is `v0.1.1`.
+- Receiver commands may omit `--room`; A47 generates a room code in the `A47-XXXXXX` format.
+- Typed room codes are normalized to uppercase.
+- Opening the CLI with a file path starts the send flow for that file.
+- The default chunk size is 256 KiB.
+- Public STUN servers are enabled by default, but TURN relay support is still needed for reliable cross-network connectivity.
 
 ## Files Changed in the Latest Step
 
@@ -108,11 +124,18 @@ Phase 14 - Patch release for user-run signaling server.
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
 - `docs/SIGNALING.md`
-- `package.json`
-- `package-lock.json`
 - `src/cli.ts`
 - `src/commands/help.ts`
-- `src/commands/signaling.ts`
-- `src/signaling/client.ts`
-- `src/signaling/server.ts`
-- `tests/signaling-command.test.ts`
+- `src/commands/interactive.ts`
+- `src/commands/launch-file.ts`
+- `src/commands/receive.ts`
+- `src/commands/send.ts`
+- `src/config/config.ts`
+- `src/signaling/rooms.ts`
+- `src/transfer/progress.ts`
+- `src/transfer/receiver.ts`
+- `src/transfer/sender.ts`
+- `src/utils/paths.ts`
+- `src/webrtc/peer.ts`
+- `tests/paths.test.ts`
+- `tests/rooms.test.ts`

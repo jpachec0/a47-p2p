@@ -31,13 +31,19 @@ File metadata includes:
 
 ## Chunking
 
-The initial chunk size is 64 KiB. File data is read with Node streams and sent as ordered DataChannel binary messages. Control messages are sent as JSON strings.
+The default chunk size is 256 KiB. File data is read with Node streams and sent as ordered DataChannel binary messages. Control messages are sent as JSON strings.
+
+The sender keeps a larger DataChannel buffer window before waiting for backpressure, so LAN transfers are not intentionally throttled by a tiny application-side buffer. Progress rendering is throttled to avoid terminal output becoming a transfer bottleneck.
 
 ## Integrity
 
 The sender calculates a SHA-256 hash before transfer. The receiver calculates a SHA-256 hash while writing the file and compares the result after the final chunk.
 
 If the hash does not match, the receiver removes the failed output file and reports a readable error.
+
+## Receiver Acceptance
+
+After file metadata arrives, the CLI receiver prompts the user to accept or reject the incoming file before any file bytes are written.
 
 ## Interrupted Transfers
 

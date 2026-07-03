@@ -41,6 +41,8 @@ Room codes are normalized by trimming surrounding whitespace. The signaling serv
 
 Room codes are still convenience shared secrets, not full authentication. Use unguessable room codes for real transfers.
 
+The receiver can generate a user-friendly room code automatically. Generated codes use the `A47-XXXXXX` format.
+
 ## Running Locally
 
 Installed CLI:
@@ -83,6 +85,8 @@ A47_SIGNALING_HOST=0.0.0.0 npm run signaling
 ```
 
 Connection refused errors mean no signaling server is reachable at the configured URL, the wrong host was used, or the port is blocked.
+
+For users on different networks who should not type IP addresses, A47 needs a public signaling server URL that both peers can reach. The signaling server still only relays WebRTC metadata and never receives file contents.
 
 ## Test Coverage
 

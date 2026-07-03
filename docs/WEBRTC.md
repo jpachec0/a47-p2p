@@ -27,6 +27,12 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 
 The transfer layer should use a small wrapper API instead of depending directly on `werift` internals.
 
+## NAT Traversal
+
+A47 configures public STUN servers by default so peers can discover usable WebRTC candidates outside a single LAN in many home-network cases.
+
+STUN does not guarantee connectivity for every NAT or firewall. Restrictive networks may require a TURN relay. TURN relay support is planned because it is the correct fallback for users who need transfers between different homes without manually exchanging IP addresses.
+
 ## Current Wrapper API
 
 The current wrapper exposes:

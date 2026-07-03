@@ -9,8 +9,10 @@ a47 help
 a47 version
 a47 signaling --port 4747
 a47 signaling --host 0.0.0.0 --port 4747
+a47 receive
 a47 send ./file.zip --room my-room
 a47 receive --room my-room
+a47 ./file.zip
 a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
 a47 config get server
@@ -27,6 +29,22 @@ Running `a47` without arguments opens a terminal-only interactive menu. The inte
 - Help
 - Settings/configuration
 - Exit
+
+The receive flow generates a room code automatically and waits for a sender. The send flow asks for a file path and room code.
+
+## File Launch Flow
+
+When the executable is opened with a file path, such as by dragging a file onto `a47.exe`, A47 starts the send flow for that file and prompts for the room code and signaling server URL.
+
+Examples:
+
+```bash
+a47 ./file.zip
+a47 C:/Users/Ada/Downloads/file.zip
+a47 /file.zip
+```
+
+If `/file.zip` does not exist as an absolute path, A47 also checks for `file.zip` relative to the current directory and the executable directory.
 
 ## Signaling Server
 
@@ -53,7 +71,7 @@ a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
 
 Do not use `localhost` for both peers when they are on different computers. `localhost` always means the current computer.
 
-Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens.
+Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens. Typed room codes are normalized to uppercase. Automatically generated room codes use the `A47-XXXXXX` format.
 
 If a command prints `Unable to connect to signaling server`, start `a47 signaling` first, confirm the URL points to the correct machine, and check whether a firewall is blocking the port.
 
@@ -61,7 +79,7 @@ If a command prints `Unable to connect to signaling server`, start `a47 signalin
 
 - Default signaling server: `ws://localhost:4747`
 - Default output directory: current working directory
-- Default chunk size: 64 KiB
+- Default chunk size: 256 KiB
 
 ## Configuration
 
@@ -78,7 +96,7 @@ Examples:
 a47 config get server
 a47 config set server ws://localhost:4747
 a47 config get chunk-size
-a47 config set chunk-size 65536
+a47 config set chunk-size 262144
 ```
 
 Command-line options such as `--server` override saved defaults for a single command.

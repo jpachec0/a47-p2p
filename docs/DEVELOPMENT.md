@@ -55,6 +55,8 @@ npm test
 
 The test suite includes unit tests for config, path handling, error output, room code validation, and transfer protocol helpers, plus integration tests for the signaling relay, room protection rules, hash mismatch cleanup, interrupted receive cleanup, interrupted sender handling, and a small WebRTC DataChannel file transfer.
 
+Performance-sensitive transfer behavior is covered by code review and local smoke tests. When validating throughput, use large files, avoid measuring the initial SHA-256 preflight as network transfer time, and compare against the available WebRTC path. The application default is a 256 KiB chunk size with a larger DataChannel buffer window.
+
 ## Debugging
 
 The CLI hides raw stack traces during normal use. Enable debug output when investigating failures:
@@ -77,13 +79,13 @@ node dist/cli.js signaling --port 4747
 Terminal 2:
 
 ```bash
-node dist/cli.js receive --room test-room --output ./downloads --server ws://localhost:4747
+node dist/cli.js receive --output ./downloads --server ws://localhost:4747
 ```
 
 Terminal 3:
 
 ```bash
-node dist/cli.js send ./example.txt --room test-room --server ws://localhost:4747
+node dist/cli.js send ./example.txt --room <generated-room> --server ws://localhost:4747
 ```
 
 ## Packaging Plan

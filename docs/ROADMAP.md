@@ -61,3 +61,11 @@ Prepare normal-user installation and binary release documentation.
 Phases 1 through 14 have an MVP implementation path. The first release tag, `v0.1.0`, has been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
 
 The next patch release is `v0.1.1`. It exposes the signaling server through the installed `a47 signaling` command and documents how to use a reachable server URL instead of `localhost` when sender and receiver run on different computers.
+
+The current development focus is higher transfer throughput and a normal-user flow:
+
+- Receiver-generated room codes.
+- File launch and drag-and-drop send flow for packaged executables.
+- Receiver acceptance before writing file bytes.
+- Larger chunks, larger DataChannel buffering, and throttled terminal progress output.
+- Public signaling and TURN relay planning so users on different networks do not need to exchange IP addresses.

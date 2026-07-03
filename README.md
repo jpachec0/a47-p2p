@@ -59,8 +59,10 @@ a47 help
 a47 version
 a47 signaling --port 4747
 a47 signaling --host 0.0.0.0 --port 4747
+a47 receive
 a47 send ./file.zip --room my-room
 a47 receive --room my-room
+a47 ./file.zip
 a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
 a47 config get server
@@ -81,6 +83,20 @@ a47 receive --room test-room --server ws://localhost:4747
 a47 send ./example.txt --room test-room --server ws://localhost:4747
 ```
 
+For the user-oriented receive flow, the receiver can generate the room code automatically:
+
+```bash
+a47 receive
+```
+
+The receiver prints a code such as `A47-SK2S29`. The sender can drag a file onto the executable or pass the file path directly:
+
+```bash
+a47 ./example.txt
+```
+
+The sender is prompted for the room code, and the receiver is prompted to accept or reject the incoming file.
+
 For two different computers, `localhost` points to each individual computer. Start the server on one machine with:
 
 ```bash
@@ -95,6 +111,8 @@ a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
 ```
 
 If you see `Unable to connect to signaling server` or `connection refused`, the signaling server is not running at that URL, the wrong host was used, or a firewall is blocking the port.
+
+For transfers between different homes or networks without typing an IP address, A47 needs a public WebSocket signaling server and NAT traversal support. The CLI now includes public STUN servers for WebRTC candidate discovery, but some restrictive networks will still require a TURN relay.
 
 ## Architecture Summary
 
@@ -114,6 +132,7 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 - Folder transfer is planned for a future version.
 - The signaling server is intentionally simple and does not provide authentication yet.
 - Configuration currently supports `server` and `chunk-size`.
+- The default transfer chunk size is 256 KiB. Throughput is intended to be limited by the users' network and WebRTC path, not by artificial CLI throttling.
 - Release binaries are generated with `@yao-pkg/pkg` and published by the GitHub Actions release workflow when a `v*` tag is pushed.
 - `npm audit --omit=dev` currently reports a high-severity transitive vulnerability in `ip` through `werift`/`werift-ice`; npm reports no fix available.
 
@@ -125,9 +144,9 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 ## Install for Users
 
-Current release: `v0.1.1`.
+Current published release: `v0.1.0`.
 
-User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.1` is pushed.
+The `develop` branch is preparing package version `0.1.1` with the new signaling command, room generation, and throughput work. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.1` is pushed.
 
 Expected release assets:
 

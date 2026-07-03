@@ -6,6 +6,11 @@ import { A47Error } from "../utils/errors.js";
 import { waitForDataChannelOpen, type DataChannelPayload } from "./data-channel.js";
 export type { DataChannelPayload } from "./data-channel.js";
 
+const DEFAULT_ICE_SERVERS = [
+  { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" }
+];
+
 export interface A47Peer {
   onData(callback: (payload: DataChannelPayload) => void): void;
   onClose(callback: () => void): void;
@@ -138,7 +143,7 @@ export async function createReceiverPeer(options: PeerOptions): Promise<A47Peer>
 
 function createPeerConnection(signalingClient: SignalingClient): RTCPeerConnection {
   const peerConnection = new RTCPeerConnection({
-    iceServers: []
+    iceServers: DEFAULT_ICE_SERVERS
   });
 
   peerConnection.onIceCandidate.subscribe((candidate) => {

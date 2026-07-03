@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { getRoomCodeValidationError, normalizeRoomCode } from "../src/signaling/rooms.js";
+import { generateRoomCode, getRoomCodeValidationError, normalizeRoomCode } from "../src/signaling/rooms.js";
 
 describe("room code validation", () => {
-  it("normalizes surrounding whitespace", () => {
-    expect(normalizeRoomCode("  test-room  ")).toBe("test-room");
+  it("normalizes surrounding whitespace and casing", () => {
+    expect(normalizeRoomCode("  test-room  ")).toBe("TEST-ROOM");
+  });
+
+  it("generates user-friendly room codes", () => {
+    const roomCode = generateRoomCode();
+
+    expect(roomCode).toMatch(/^A47-[A-Z2-9]{6}$/);
+    expect(getRoomCodeValidationError(roomCode)).toBeUndefined();
   });
 
   it("accepts supported room code characters", () => {

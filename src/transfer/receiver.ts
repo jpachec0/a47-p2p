@@ -10,8 +10,10 @@ import {
   tryDecodeTransferMessage,
   type FileMetaMessage
 } from "./protocol.js";
+import { ProgressRenderer } from "./progress.js";
 
 interface ReceiveFileOptions {
+  acceptFile?: (metadata: FileMetaMessage) => Promise<boolean>;
   outputDirectory: string;
   peer: A47Peer;
 }
@@ -27,6 +29,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
     let writeStream: WriteStream | undefined;
     let receivedBytes = 0;
     let isSettled = false;
+    let progress: ProgressRenderer | undefined;
     const hash = createHash("sha256");
 
     const rejectTransfer = async (error: Error): Promise<void> => {
@@ -62,8 +65,15 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
 
             if (message.type === "file-meta") {
               metadata = message;
+              const isAccepted = options.acceptFile ? await options.acceptFile(metadata) : true;
+
+              if (!isAccepted) {
+                throw new Error("Transfer rejected by receiver.");
+              }
+
               outputPath = await getAvailableFilePath(options.outputDirectory, metadata.fileName);
               writeStream = createWriteStream(outputPath);
+              progress = new ProgressRenderer("Received", metadata.fileSize);
               options.peer.send(encodeTransferMessage({ type: "receiver-accepted" }));
               console.log(`Receiving ${metadata.fileName} -> ${path.resolve(outputPath)}`);
             }
@@ -87,7 +97,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
                   })
                 );
 
-                process.stdout.write("\n");
+                progress?.finish(receivedBytes);
 
                 if (!ok) {
                   await rejectTransfer(new Error("SHA-256 verification failed. The received file was removed."));
@@ -115,7 +125,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
           hash.update(chunk);
           writeStream.write(chunk);
           receivedBytes += chunk.length;
-          renderProgress("Received", receivedBytes, metadata.fileSize);
+          progress?.render(receivedBytes);
         } catch (error) {
           const message = error instanceof Error ? error.message : "Receive failed.";
           options.peer.send(encodeTransferMessage({ type: "file-error", message }));
@@ -130,9 +140,4 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
 
 function normalizeBinaryPayload(payload: DataChannelPayload): Buffer {
   return Buffer.isBuffer(payload) ? payload : Buffer.from(payload);
-}
-
-function renderProgress(label: string, currentBytes: number, totalBytes: number): void {
-  const percentage = totalBytes === 0 ? 100 : Math.floor((currentBytes / totalBytes) * 100);
-  process.stdout.write(`\r${label}: ${percentage}% (${currentBytes}/${totalBytes} bytes)`);
 }

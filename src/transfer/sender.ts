@@ -6,6 +6,7 @@ import type { A47Peer } from "../webrtc/peer.js";
 import { waitForBufferedAmountLow } from "../webrtc/data-channel.js";
 import { readFileChunks } from "./chunks.js";
 import { calculateFileSha256 } from "./hash.js";
+import { ProgressRenderer } from "./progress.js";
 import {
   encodeTransferMessage,
   TRANSFER_PROTOCOL_VERSION,
@@ -18,7 +19,7 @@ interface SendFileOptions {
   chunkSizeBytes?: number;
 }
 
-const MAX_BUFFERED_AMOUNT_BYTES = 1024 * 1024;
+const MAX_BUFFERED_AMOUNT_BYTES = 32 * 1024 * 1024;
 
 export async function sendFile(options: SendFileOptions): Promise<void> {
   const chunkSizeBytes = options.chunkSizeBytes ?? DEFAULT_CHUNK_SIZE_BYTES;
@@ -44,14 +45,16 @@ export async function sendFile(options: SendFileOptions): Promise<void> {
   await waitForTransferMessage(options.peer, "receiver-accepted");
 
   let sentBytes = 0;
+  const progress = new ProgressRenderer("Sent", fileStat.size);
+
   for await (const chunk of readFileChunks(options.filePath, chunkSizeBytes)) {
     await waitForBufferedAmountLow(options.peer.getDataChannel(), MAX_BUFFERED_AMOUNT_BYTES);
     options.peer.send(chunk);
     sentBytes += chunk.length;
-    renderProgress("Sent", sentBytes, fileStat.size);
+    progress.render(sentBytes);
   }
 
-  process.stdout.write("\n");
+  progress.finish(sentBytes);
   options.peer.send(encodeTransferMessage({ type: "file-complete" }));
 
   const hashResult = await waitForTransferMessage(options.peer, "hash-result");
@@ -111,9 +114,4 @@ function waitForTransferMessage<TType extends TransferControlMessage["type"]>(
       }
     });
   });
-}
-
-function renderProgress(label: string, currentBytes: number, totalBytes: number): void {
-  const percentage = totalBytes === 0 ? 100 : Math.floor((currentBytes / totalBytes) * 100);
-  process.stdout.write(`\r${label}: ${percentage}% (${currentBytes}/${totalBytes} bytes)`);
 }

@@ -2,6 +2,7 @@
 import { Command } from "commander";
 
 import { showConfigValue, updateConfigValue } from "./commands/config.js";
+import { runLaunchFileFlow } from "./commands/launch-file.js";
 import { runInteractiveMode } from "./commands/interactive.js";
 import { runReceiveCommand } from "./commands/receive.js";
 import { runSendCommand } from "./commands/send.js";
@@ -49,7 +50,7 @@ async function main(): Promise<void> {
   program
     .command("receive")
     .description("Receive one file from a peer.")
-    .requiredOption("--room <room>", "Room code shared with the sender.")
+    .option("--room <room>", "Room code shared with the sender. A room is generated when omitted.")
     .option("--output <dir>", "Output directory.")
     .option("--server <url>", "Signaling server URL.")
     .action(async (options: { room?: string; output?: string; server?: string }) => {
@@ -90,6 +91,10 @@ async function main(): Promise<void> {
 
   if (process.argv.length <= 2) {
     await runInteractiveMode();
+    return;
+  }
+
+  if (await runLaunchFileFlow(process.argv.slice(2))) {
     return;
   }
 
