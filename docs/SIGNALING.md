@@ -41,3 +41,7 @@ The default port is `4747`. It can be changed with:
 ```bash
 A47_SIGNALING_PORT=5757 npm run signaling
 ```
+
+## Test Coverage
+
+The automated test suite starts the signaling server on an ephemeral port, verifies room joins, confirms signaling message relay between two peers, and checks that a third peer is rejected from a two-peer MVP room.

@@ -41,6 +41,8 @@ npm run build
 npm test
 ```
 
+The test suite includes unit tests for config, path handling, and transfer protocol helpers, plus integration tests for the signaling relay and a small WebRTC DataChannel file transfer.
+
 ## Local MVP Validation
 
 Terminal 1:

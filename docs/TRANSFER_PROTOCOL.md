@@ -38,3 +38,7 @@ The initial chunk size is 64 KiB. File data is read with Node streams and sent a
 The sender calculates a SHA-256 hash before transfer. The receiver calculates a SHA-256 hash while writing the file and compares the result after the final chunk.
 
 If the hash does not match, the receiver removes the failed output file and reports a readable error.
+
+## Test Coverage
+
+The automated integration suite transfers a small file through the real signaling server, `werift` peer layer, and WebRTC DataChannel path. It verifies that the received file content matches the source file.

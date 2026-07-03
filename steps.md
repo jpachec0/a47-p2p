@@ -30,11 +30,14 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Implemented persistent `a47 config get` and `a47 config set` commands.
 - Updated send, receive, and interactive flows to use saved config defaults.
 - Added config tests.
+- Added signaling integration tests for relay behavior and two-peer room limits.
+- Added a WebRTC transfer integration test using a real signaling server and DataChannel.
+- Hardened `receiveFile` so it creates the output directory when needed.
 
 ## Pending Tasks
 
-- Add automated tests for signaling and WebRTC transfer flows.
 - Add debug mode for raw stack traces when needed.
+- Add more transfer failure-path tests.
 - Add authentication or stronger room protection for signaling.
 - Create GitHub Actions release workflow.
 - Generate actual Windows, Linux, and macOS binary assets.
@@ -47,8 +50,8 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 
 ## Next Actions
 
-- Add signaling and transfer integration tests.
 - Add debug mode for raw stack traces when needed.
+- Add transfer interruption and hash mismatch tests.
 - Choose a binary packaging tool and add CI release automation.
 
 ## Decisions Already Made
@@ -68,16 +71,11 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 
 ## Files Changed in the Latest Step
 
-- `README.md`
 - `steps.md`
-- `docs/CLI.md`
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `src/cli.ts`
-- `src/commands/config.ts`
-- `src/commands/help.ts`
-- `src/commands/interactive.ts`
-- `src/commands/receive.ts`
-- `src/commands/send.ts`
-- `src/config/config.ts`
-- `tests/config.test.ts`
+- `docs/SIGNALING.md`
+- `docs/TRANSFER_PROTOCOL.md`
+- `src/transfer/receiver.ts`
+- `tests/signaling.test.ts`
+- `tests/transfer-integration.test.ts`

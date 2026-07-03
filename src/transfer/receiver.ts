@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { createWriteStream, type WriteStream } from "node:fs";
-import { unlink } from "node:fs/promises";
+import { mkdir, unlink } from "node:fs/promises";
 import path from "node:path";
 
 import { getAvailableFilePath } from "../utils/paths.js";
@@ -17,6 +17,7 @@ interface ReceiveFileOptions {
 }
 
 export async function receiveFile(options: ReceiveFileOptions): Promise<string> {
+  await mkdir(options.outputDirectory, { recursive: true });
   await options.peer.waitUntilOpen();
   console.log("WebRTC DataChannel is open.");
 
