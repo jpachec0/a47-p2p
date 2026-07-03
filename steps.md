@@ -47,19 +47,22 @@ Phase 14 - Release workflow and user-ready binary packaging.
 - Added a GitHub Actions release workflow for `v*` tags.
 - Generated and locally validated the Linux release binary.
 - Updated installer scripts to use the project GitHub Releases URL by default.
+- Prepared the first release tag: `v0.1.0`.
 
 ## Pending Tasks
 
-- Cut the first tagged GitHub release.
+- Monitor the `v0.1.0` GitHub Actions release workflow.
+- Verify that all release assets are attached to the GitHub Release.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- No official tagged GitHub release has been cut yet.
+- The official release assets depend on the `v0.1.0` GitHub Actions workflow completing successfully.
 
 ## Next Actions
 
-- Create and push the first version tag, for example `v0.1.0`, when ready to publish release assets.
+- Push the `v0.1.0` tag.
+- Check the GitHub Actions release workflow and verify the attached release assets.
 
 ## Decisions Already Made
 
@@ -81,16 +84,9 @@ Phase 14 - Release workflow and user-ready binary packaging.
 - Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens.
 - Release binaries are generated with `@yao-pkg/pkg`.
 - Pushing a `v*` tag runs the GitHub Actions release workflow and publishes release assets.
+- The first release tag is `v0.1.0`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
-- `.github/workflows/release.yml`
-- `.gitignore`
-- `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `README.md`
-- `install.sh`
-- `install.ps1`
-- `package.json`
-- `package-lock.json`
