@@ -1,0 +1,51 @@
+{
+  "name": "a47-p2p",
+  "version": "0.1.0",
+  "description": "A command-line peer-to-peer file transfer tool using WebRTC DataChannels.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "a47": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "docs",
+    "README.md",
+    "install.sh",
+    "install.ps1"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:production": "npm run build",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "signaling": "tsx src/signaling/server.ts",
+    "signaling:dist": "node dist/signaling/server.js",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "p2p",
+    "webrtc",
+    "file-transfer",
+    "cli",
+    "werift"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.5.2",
+    "commander": "^15.0.0",
+    "werift": "^0.23.0",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.0"
+  }
+}
