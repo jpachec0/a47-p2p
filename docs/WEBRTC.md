@@ -36,9 +36,10 @@ The default ICE server list is configurable:
 ```bash
 a47 config get ice-servers
 a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
+a47 config set ice-servers '[{"urls":"turn:turn.example.com:3478","username":"a47","credential":"replace-this-secret"}]'
 ```
 
-STUN does not guarantee connectivity for every NAT or firewall. Restrictive networks may require a TURN relay. The current CLI accepts TURN URLs in the ICE server list, but authenticated TURN deployment still needs a release-ready credential strategy.
+STUN does not guarantee connectivity for every NAT or firewall. Restrictive networks may require a TURN relay. The CLI accepts authenticated TURN entries as JSON, but release-ready public usage still needs a safe credential distribution strategy.
 
 ## Current Wrapper API
 

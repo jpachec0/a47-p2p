@@ -27,6 +27,7 @@ HOME=/tmp/a47-config-validation node dist/cli.js config set server ws://localhos
 HOME=/tmp/a47-config-validation node dist/cli.js config get server
 HOME=/tmp/a47-config-validation node dist/cli.js config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
 HOME=/tmp/a47-config-validation node dist/cli.js config get ice-servers
+HOME=/tmp/a47-config-validation node dist/cli.js config set ice-servers '[{"urls":"turn:turn.example.com:3478","username":"a47","credential":"replace-this-secret"}]'
 ```
 
 ## Run the Signaling Server
@@ -60,6 +61,14 @@ The test suite includes unit tests for config, path handling, error output, room
 Performance-sensitive transfer behavior is covered by code review and local smoke tests. When validating throughput, use large files, avoid measuring the initial SHA-256 preflight as network transfer time, and compare against the available WebRTC path. The application default is a 256 KiB chunk size with a larger DataChannel buffer window.
 
 For cross-network validation, use a public `wss://` signaling URL and a configured ICE server list. STUN may work for many home networks, but reliable validation across restrictive networks requires TURN credentials.
+
+Build the local signaling Docker image:
+
+```bash
+npm run docker:signaling
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for public signaling and TURN deployment notes.
 
 ## Debugging
 

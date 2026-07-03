@@ -72,10 +72,15 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Documented the separation between public signaling for discovery and ICE/STUN/TURN for NAT traversal.
 - Validated configurable ICE server support with TypeScript checks, automated tests, build, config smoke tests, invalid ICE URL smoke tests, and help output checks.
 - Committed and pushed configurable ICE server support to `develop`.
+- Added authenticated TURN JSON support to the `ice-servers` config value.
+- Added a Dockerfile and npm script for deploying the signaling server container.
+- Added `docs/DEPLOYMENT.md` with public signaling and TURN deployment requirements.
+- Validated authenticated TURN config and signaling deployment assets with TypeScript checks, automated tests, build, CLI config smoke tests, invalid JSON smoke tests, help output checks, and Docker image build.
 
 ## Pending Tasks
 
-- Plan public signaling server hosting and authenticated TURN relay support so users on different networks do not need to exchange IP addresses.
+- Commit and push authenticated TURN config and deployment documentation.
+- Plan TURN credential distribution for normal users without committing long-lived secrets.
 - Re-evaluate the next release version after the throughput work is validated.
 
 ## Known Issues
@@ -83,11 +88,13 @@ Phase 14 - Throughput and normal-user transfer flow.
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
 - The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` but not yet released.
 - Transfers between different homes still need a public signaling server URL reachable by both peers.
-- Some restrictive NAT/firewall combinations will still require authenticated TURN relay support; STUN alone is not guaranteed.
+- Some restrictive NAT/firewall combinations require TURN relay support; STUN alone is not guaranteed.
+- The project still needs a production TURN credential distribution strategy before public cross-network transfer can be considered user-ready.
 
 ## Next Actions
 
-- Design the public signaling and authenticated TURN deployment path.
+- Validate and push authenticated TURN config and signaling deployment assets.
+- Design TURN credential distribution for public releases.
 - Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
 
 ## Decisions Already Made
@@ -120,22 +127,20 @@ Phase 14 - Throughput and normal-user transfer flow.
 - The default chunk size is 256 KiB.
 - Public STUN servers are enabled by default, but TURN relay support is still needed for reliable cross-network connectivity.
 - ICE server URLs are configurable through the `ice-servers` config key.
+- Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
+- `.dockerignore`
+- `Dockerfile.signaling`
 - `README.md`
-- `docs/ARCHITECTURE.md`
 - `docs/CLI.md`
+- `docs/DEPLOYMENT.md`
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
 - `docs/SIGNALING.md`
 - `docs/WEBRTC.md`
-- `src/cli.ts`
-- `src/commands/help.ts`
-- `src/commands/interactive.ts`
-- `src/commands/receive.ts`
-- `src/commands/send.ts`
+- `package.json`
 - `src/config/config.ts`
-- `src/webrtc/peer.ts`
 - `tests/config.test.ts`

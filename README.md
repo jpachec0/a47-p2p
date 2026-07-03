@@ -69,6 +69,7 @@ a47 config get server
 a47 config set server ws://localhost:4747
 a47 config get ice-servers
 a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
+a47 config set ice-servers '[{"urls":"turn:turn.example.com:3478","username":"a47","credential":"replace-this-secret"}]'
 a47 --debug send ./file.zip --room my-room
 ```
 
@@ -114,7 +115,7 @@ a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
 
 If you see `Unable to connect to signaling server` or `connection refused`, the signaling server is not running at that URL, the wrong host was used, or a firewall is blocking the port.
 
-For transfers between different homes or networks without typing an IP address, A47 needs a public WebSocket signaling server and NAT traversal support. The CLI includes public STUN servers for WebRTC candidate discovery and lets users configure custom STUN/TURN URLs through `a47 config set ice-servers`. Some restrictive networks will still require a TURN relay with credentials.
+For transfers between different homes or networks without typing an IP address, A47 needs a public WebSocket signaling server and NAT traversal support. The CLI includes public STUN servers for WebRTC candidate discovery and lets users configure custom STUN/TURN URLs through `a47 config set ice-servers`. Some restrictive networks require an authenticated TURN relay.
 
 ## Architecture Summary
 
@@ -177,3 +178,5 @@ iwr https://github.com/jpachec0/a47-p2p/releases/latest/download/install.ps1 -Ou
 Uninstall by deleting the installed `a47` or `a47.exe` file from the chosen install directory.
 
 See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for the packaging plan.
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for public signaling and TURN deployment notes.

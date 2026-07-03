@@ -75,6 +75,10 @@ export function getConfigValue(config: A47Config, key: ConfigKey): string {
   }
 
   if (key === "ice-servers") {
+    if (config.iceServers.some((iceServer) => iceServer.username || iceServer.credential)) {
+      return JSON.stringify(config.iceServers);
+    }
+
     return config.iceServers.map((iceServer) => iceServer.urls).join(",");
   }
 
@@ -126,6 +130,12 @@ function normalizeServerUrl(serverUrl: string): string {
 }
 
 function parseIceServerUrls(value: string): IceServerConfig[] {
+  const trimmedValue = value.trim();
+
+  if (trimmedValue.startsWith("[") || trimmedValue.startsWith("{")) {
+    return parseIceServerJson(trimmedValue);
+  }
+
   const iceServers = value
     .split(",")
     .map((url) => url.trim())
@@ -139,15 +149,46 @@ function parseIceServerUrls(value: string): IceServerConfig[] {
   return iceServers;
 }
 
+function parseIceServerJson(value: string): IceServerConfig[] {
+  let parsedValue: unknown;
+
+  try {
+    parsedValue = JSON.parse(value);
+  } catch {
+    throw new A47Error("ICE server JSON must be valid JSON.");
+  }
+
+  const iceServers = Array.isArray(parsedValue) ? parsedValue : [parsedValue];
+
+  if (iceServers.length === 0) {
+    throw new A47Error("ICE servers must include at least one STUN, TURN, or TURNS URL.");
+  }
+
+  return iceServers.map(normalizeIceServerObject);
+}
+
 function normalizeIceServers(iceServers: IceServerConfig[]): IceServerConfig[] {
   if (!Array.isArray(iceServers) || iceServers.length === 0) {
     return DEFAULT_ICE_SERVERS;
   }
 
-  return iceServers.map((iceServer) => ({
-    ...iceServer,
-    urls: normalizeIceServerUrl(iceServer.urls)
-  }));
+  return iceServers.map(normalizeIceServerObject);
+}
+
+function normalizeIceServerObject(iceServer: unknown): IceServerConfig {
+  if (!isIceServerObject(iceServer)) {
+    throw new A47Error("ICE server entries must include a string urls field.");
+  }
+
+  return {
+    urls: normalizeIceServerUrl(iceServer.urls),
+    username: normalizeOptionalString(iceServer.username, "ICE server username must be a string."),
+    credential: normalizeOptionalString(iceServer.credential, "ICE server credential must be a string.")
+  };
+}
+
+function isIceServerObject(value: unknown): value is IceServerConfig {
+  return typeof value === "object" && value !== null && "urls" in value && typeof value.urls === "string";
 }
 
 function normalizeIceServerUrl(url: string): string {
@@ -162,6 +203,19 @@ function normalizeIceServerUrl(url: string): string {
   }
 
   return trimmedUrl;
+}
+
+function normalizeOptionalString(value: unknown, errorMessage: string): string | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value !== "string") {
+    throw new A47Error(errorMessage);
+  }
+
+  const trimmedValue = value.trim();
+  return trimmedValue || undefined;
 }
 
 function isMissingFileError(error: unknown): boolean {

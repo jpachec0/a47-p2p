@@ -93,9 +93,12 @@ The signaling URL and ICE server list are separate settings:
 ```bash
 a47 config set server wss://signal.example.com
 a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:3478
+a47 config set ice-servers '[{"urls":"turn:turn.example.com:3478","username":"a47","credential":"replace-this-secret"}]'
 ```
 
 The public signaling server solves discovery and room negotiation. STUN/TURN servers solve WebRTC NAT traversal.
+
+See `docs/DEPLOYMENT.md` for the public signaling and TURN deployment plan.
 
 ## Test Coverage
 

@@ -1,0 +1,8 @@
+dist
+docs
+node_modules
+release
+.git
+.github
+.a47
+npm-debug.log

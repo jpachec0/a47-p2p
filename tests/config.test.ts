@@ -44,6 +44,24 @@ describe("config", () => {
     );
   });
 
+  it("updates authenticated ICE servers from JSON", () => {
+    const updatedConfig = setConfigValue(
+      getDefaultConfig(),
+      "ice-servers",
+      '[{"urls":"turn:turn.example.test:3478","username":"a47","credential":"test-turn-credential"}]'
+    );
+
+    expect(getConfigValue(updatedConfig, "ice-servers")).toBe(
+      '[{"urls":"turn:turn.example.test:3478","username":"a47","credential":"test-turn-credential"}]'
+    );
+  });
+
+  it("rejects invalid ICE server JSON", () => {
+    expect(() => setConfigValue(getDefaultConfig(), "ice-servers", "[bad-json")).toThrow(
+      "ICE server JSON must be valid JSON."
+    );
+  });
+
   it("rejects unsupported ICE server URL protocols", () => {
     expect(() => setConfigValue(getDefaultConfig(), "ice-servers", "https://example.test")).toThrow(
       "ICE server URLs must start with stun:, turn:, or turns:."
