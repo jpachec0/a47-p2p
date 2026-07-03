@@ -1,4 +1,4 @@
-import { DEFAULT_OUTPUT_DIRECTORY, DEFAULT_SIGNALING_SERVER_URL } from "../config/config.js";
+import { DEFAULT_OUTPUT_DIRECTORY, loadConfig } from "../config/config.js";
 import { SignalingClient } from "../signaling/client.js";
 import { receiveFile } from "../transfer/receiver.js";
 import { A47Error } from "../utils/errors.js";
@@ -13,7 +13,8 @@ export interface ReceiveCommandOptions {
 
 export async function runReceiveCommand(options: ReceiveCommandOptions): Promise<void> {
   const room = options.room?.trim();
-  const serverUrl = options.server?.trim() || DEFAULT_SIGNALING_SERVER_URL;
+  const config = await loadConfig();
+  const serverUrl = options.server?.trim() || config.signalingServerUrl;
   const outputDirectory = await resolveOutputDirectory(options.output?.trim() || DEFAULT_OUTPUT_DIRECTORY);
 
   if (!room) {

@@ -1,4 +1,4 @@
-import { DEFAULT_SIGNALING_SERVER_URL } from "../config/config.js";
+import { loadConfig } from "../config/config.js";
 import { SignalingClient } from "../signaling/client.js";
 import { sendFile } from "../transfer/sender.js";
 import { A47Error } from "../utils/errors.js";
@@ -12,7 +12,8 @@ export interface SendCommandOptions {
 
 export async function runSendCommand(filePath: string, options: SendCommandOptions): Promise<void> {
   const room = options.room?.trim();
-  const serverUrl = options.server?.trim() || DEFAULT_SIGNALING_SERVER_URL;
+  const config = await loadConfig();
+  const serverUrl = options.server?.trim() || config.signalingServerUrl;
 
   if (!room) {
     throw new A47Error("Missing required option: --room <room>.");

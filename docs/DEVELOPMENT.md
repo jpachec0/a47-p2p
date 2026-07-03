@@ -18,6 +18,15 @@ npm run build
 node dist/cli.js help
 ```
 
+## Configuration
+
+Use a temporary home directory when testing config commands without touching your real user configuration:
+
+```bash
+HOME=/tmp/a47-config-validation node dist/cli.js config set server ws://localhost:5757
+HOME=/tmp/a47-config-validation node dist/cli.js config get server
+```
+
 ## Run the Signaling Server
 
 ```bash

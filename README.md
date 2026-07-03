@@ -49,6 +49,8 @@ a47 send ./file.zip --room my-room
 a47 receive --room my-room
 a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
+a47 config get server
+a47 config set server ws://localhost:4747
 ```
 
 ## Architecture Summary
@@ -66,12 +68,12 @@ Files do not pass through the signaling server. WebRTC provides encrypted transp
 - Single-file transfer is the initial target.
 - Folder transfer is planned for a future version.
 - The signaling server is intentionally simple and does not provide authentication yet.
+- Configuration currently supports `server` and `chunk-size`.
 - Binary release documentation and installer script templates exist, but release binaries are not generated in this environment.
 - `npm audit --omit=dev` currently reports a high-severity transitive vulnerability in `ip` through `werift`/`werift-ice`; npm reports no fix available.
 
 ## Roadmap
 
-- Add persistent config commands.
 - Harden signaling authentication and room handling.
 - Add release automation for Windows, Linux, and macOS binaries.
 - Add more tests around signaling and transfer failure cases.

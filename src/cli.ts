@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 
+import { showConfigValue, updateConfigValue } from "./commands/config.js";
 import { runInteractiveMode } from "./commands/interactive.js";
 import { runReceiveCommand } from "./commands/receive.js";
 import { runSendCommand } from "./commands/send.js";
@@ -51,6 +52,27 @@ async function main(): Promise<void> {
     .option("--server <url>", "Signaling server URL.")
     .action(async (options: { room?: string; output?: string; server?: string }) => {
       await runReceiveCommand(options);
+    });
+
+  const configCommand = program
+    .command("config")
+    .description("Read and update local A47 configuration.");
+
+  configCommand
+    .command("get")
+    .description("Show a config value.")
+    .argument("<key>", "Config key. Supported keys: server, chunk-size.")
+    .action(async (key: string) => {
+      await showConfigValue(key);
+    });
+
+  configCommand
+    .command("set")
+    .description("Update a config value.")
+    .argument("<key>", "Config key. Supported keys: server, chunk-size.")
+    .argument("<value>", "New config value.")
+    .action(async (key: string, value: string) => {
+      await updateConfigValue(key, value);
     });
 
   program.exitOverride();

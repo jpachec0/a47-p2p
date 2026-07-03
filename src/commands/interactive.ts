@@ -1,6 +1,6 @@
 import { input } from "@inquirer/prompts";
 
-import { DEFAULT_OUTPUT_DIRECTORY, DEFAULT_SIGNALING_SERVER_URL, getDefaultConfig } from "../config/config.js";
+import { DEFAULT_OUTPUT_DIRECTORY, loadConfig } from "../config/config.js";
 import { clearScreen } from "../ui/clear.js";
 import { renderHeader } from "../ui/header.js";
 import { promptMainMenu } from "../ui/menu.js";
@@ -49,9 +49,10 @@ async function runSendFlow(): Promise<void> {
 
   const filePath = await input({ message: "File path" });
   const room = await input({ message: "Room code" });
+  const config = await loadConfig();
   const server = await input({
     message: "Signaling server URL",
-    default: DEFAULT_SIGNALING_SERVER_URL
+    default: config.signalingServerUrl
   });
 
   await runWithPause(async () => {
@@ -69,9 +70,10 @@ async function runReceiveFlow(): Promise<void> {
     message: "Output directory",
     default: DEFAULT_OUTPUT_DIRECTORY
   });
+  const config = await loadConfig();
   const server = await input({
     message: "Signaling server URL",
-    default: DEFAULT_SIGNALING_SERVER_URL
+    default: config.signalingServerUrl
   });
 
   await runWithPause(async () => {
@@ -90,11 +92,11 @@ async function runSettingsFlow(): Promise<void> {
   renderHeader();
   renderSectionTitle("Settings");
 
-  const config = getDefaultConfig();
+  const config = await loadConfig();
   console.log(`Default signaling server: ${config.signalingServerUrl}`);
   console.log(`Default chunk size: ${config.chunkSizeBytes} bytes`);
   console.log("");
-  console.log("Persistent configuration commands are planned for a future phase.");
+  console.log("Use a47 config get server or a47 config set server <url> to manage defaults.");
 
   await waitForEnter();
 }

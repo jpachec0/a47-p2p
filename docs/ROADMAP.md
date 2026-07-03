@@ -58,4 +58,4 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 8 have an MVP implementation. Phase 9 has default configuration constants and documentation, but persistent config commands are pending. Phases 10 through 14 are partially covered through readable errors, validation, documentation, tests, and installer templates.
+Phases 1 through 9 have an MVP implementation. Phases 10 through 14 are partially covered through readable errors, validation, documentation, tests, and installer templates.
