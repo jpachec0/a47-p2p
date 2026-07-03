@@ -42,3 +42,5 @@ If the hash does not match, the receiver removes the failed output file and repo
 ## Test Coverage
 
 The automated integration suite transfers a small file through the real signaling server, `werift` peer layer, and WebRTC DataChannel path. It verifies that the received file content matches the source file.
+
+Failure-path coverage includes a hash mismatch test that confirms the receiver rejects the transfer, sends a failed hash result, and removes the failed output file.

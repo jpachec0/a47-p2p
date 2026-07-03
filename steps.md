@@ -35,23 +35,24 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Hardened `receiveFile` so it creates the output directory when needed.
 - Added opt-in debug mode through `--debug` and `A47_DEBUG=1`.
 - Added error utility tests for readable and debug error output.
+- Added hash mismatch failure-path coverage that verifies failed receiver output cleanup.
+- Removed stale known-issue text about the project directory being empty.
 
 ## Pending Tasks
 
-- Add more transfer failure-path tests.
+- Add transfer interruption failure-path tests.
 - Add authentication or stronger room protection for signaling.
 - Create GitHub Actions release workflow.
 - Generate actual Windows, Linux, and macOS binary assets.
 
 ## Known Issues
 
-- The project directory was empty and was not yet a Git repository at startup.
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
 - Release binaries are documented but not generated in this environment.
 
 ## Next Actions
 
-- Add transfer interruption and hash mismatch tests.
+- Add transfer interruption tests.
 - Choose a binary packaging tool and add CI release automation.
 
 ## Decisions Already Made
@@ -73,13 +74,7 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 ## Files Changed in the Latest Step
 
 - `steps.md`
-- `README.md`
-- `docs/CLI.md`
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `docs/SECURITY.md`
-- `src/cli.ts`
-- `src/commands/help.ts`
-- `src/utils/errors.ts`
-- `src/utils/logger.ts`
-- `tests/errors.test.ts`
+- `docs/TRANSFER_PROTOCOL.md`
+- `tests/transfer-failure.test.ts`
