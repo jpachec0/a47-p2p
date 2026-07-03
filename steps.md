@@ -71,10 +71,10 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Updated sender and receiver peer creation to use configured STUN/TURN URLs instead of only hardcoded defaults.
 - Documented the separation between public signaling for discovery and ICE/STUN/TURN for NAT traversal.
 - Validated configurable ICE server support with TypeScript checks, automated tests, build, config smoke tests, invalid ICE URL smoke tests, and help output checks.
+- Committed and pushed configurable ICE server support to `develop`.
 
 ## Pending Tasks
 
-- Commit and push configurable ICE server support to `develop`.
 - Plan public signaling server hosting and authenticated TURN relay support so users on different networks do not need to exchange IP addresses.
 - Re-evaluate the next release version after the throughput work is validated.
 
@@ -87,7 +87,6 @@ Phase 14 - Throughput and normal-user transfer flow.
 
 ## Next Actions
 
-- Push configurable ICE server support.
 - Design the public signaling and authenticated TURN deployment path.
 - Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
 
