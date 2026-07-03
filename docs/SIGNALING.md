@@ -1,6 +1,28 @@
 # Signaling
 
-The signaling server is a lightweight WebSocket relay for peer discovery and WebRTC negotiation.
+A47 supports two signaling modes:
+
+- Manual signaling: users copy and paste offer and answer codes. This uses no signaling server.
+- WebSocket signaling: a lightweight WebSocket relay handles peer discovery and WebRTC negotiation.
+
+The WebSocket signaling server is optional convenience infrastructure. It is not used by `a47 send --manual` or `a47 receive --manual`.
+
+## Manual Signaling
+
+Manual signaling is the zero-server option.
+
+```bash
+a47 receive --manual
+a47 send ./example.txt --manual
+```
+
+The receiver prints an `A47-OFFER-...` code. The sender pastes it and prints an `A47-ANSWER-...` code. The receiver pastes the answer. After that, file transfer runs through the WebRTC DataChannel.
+
+Manual signaling does not receive, store, inspect, or proxy files. It also does not send connection metadata through A47 infrastructure.
+
+## WebSocket Signaling
+
+The WebSocket signaling server is a lightweight relay for peer discovery and WebRTC negotiation.
 
 ## Responsibilities
 
@@ -86,7 +108,7 @@ A47_SIGNALING_HOST=0.0.0.0 npm run signaling
 
 Connection refused errors mean no signaling server is reachable at the configured URL, the wrong host was used, or the port is blocked.
 
-For users on different networks who should not type IP addresses, A47 needs a public signaling server URL that both peers can reach. The signaling server still only relays WebRTC metadata and never receives file contents.
+For users who want room-code convenience across different networks, they can use any WebSocket signaling server URL that both peers can reach. The signaling server still only relays WebRTC metadata and never receives file contents.
 
 The signaling URL and ICE server list are separate settings:
 
@@ -96,7 +118,7 @@ a47 config set ice-servers stun:stun.l.google.com:19302,turn:turn.example.com:34
 a47 config set ice-servers '[{"urls":"turn:turn.example.com:3478","username":"a47","credential":"replace-this-secret"}]'
 ```
 
-The public signaling server solves discovery and room negotiation. STUN/TURN servers solve WebRTC NAT traversal.
+The signaling server solves discovery and room negotiation. STUN/TURN servers solve WebRTC NAT traversal.
 
 See `docs/DEPLOYMENT.md` for the public signaling and TURN deployment plan.
 

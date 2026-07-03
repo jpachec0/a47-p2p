@@ -56,7 +56,7 @@ The CLI should resolve signaling and temporary TURN credentials from defaults or
 
 ## Open Implementation Tasks
 
-- Define the public signaling URL for official releases.
+- Define whether official releases need an optional public discovery/bootstrap URL.
 - Choose a TURN provider or deploy coturn.
 - Add a temporary TURN credential endpoint.
 - Add a CLI bootstrap step that fetches temporary ICE servers.

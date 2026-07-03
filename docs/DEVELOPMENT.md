@@ -83,6 +83,24 @@ Use normal output in user-facing examples and debug output only for development 
 
 ## Local MVP Validation
 
+Manual signaling, no server:
+
+Terminal 1:
+
+```bash
+node dist/cli.js receive --manual --output ./downloads
+```
+
+Terminal 2:
+
+```bash
+node dist/cli.js send ./example.txt --manual
+```
+
+Copy the `A47-OFFER-...` code from Terminal 1 into Terminal 2, then copy the `A47-ANSWER-...` code from Terminal 2 back into Terminal 1.
+
+WebSocket signaling:
+
 Terminal 1:
 
 ```bash

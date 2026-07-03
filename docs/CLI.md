@@ -10,7 +10,9 @@ a47 version
 a47 signaling --port 4747
 a47 signaling --host 0.0.0.0 --port 4747
 a47 receive
+a47 receive --manual
 a47 send ./file.zip --room my-room
+a47 send ./file.zip --manual
 a47 receive --room my-room
 a47 ./file.zip
 a47 send ./file.zip --room my-room --server ws://localhost:4747
@@ -77,6 +79,24 @@ Do not use `localhost` for both peers when they are on different computers. `loc
 Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens. Typed room codes are normalized to uppercase. Automatically generated room codes use the `A47-XXXXXX` format.
 
 If a command prints `Unable to connect to signaling server`, start `a47 signaling` first, confirm the URL points to the correct machine, and check whether a firewall is blocking the port.
+
+## Manual Signaling
+
+Manual signaling avoids the WebSocket signaling server entirely. Users copy and paste an offer code from the receiver into the sender, then copy and paste an answer code from the sender back into the receiver.
+
+Receiver:
+
+```bash
+a47 receive --manual
+```
+
+Sender:
+
+```bash
+a47 send ./file.zip --manual
+```
+
+Manual signaling is useful when users want no signaling server at all. It still uses WebRTC DataChannels for file transfer. NAT traversal still depends on available ICE candidates, so restrictive networks may require TURN.
 
 ## Defaults
 

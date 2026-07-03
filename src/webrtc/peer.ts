@@ -66,6 +66,10 @@ class WeriftA47Peer implements A47Peer {
   }
 }
 
+export function createA47Peer(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): A47Peer {
+  return new WeriftA47Peer(peerConnection, dataChannel);
+}
+
 export async function createSenderPeer(options: PeerOptions): Promise<A47Peer> {
   const peerConnection = createPeerConnection(options);
   const dataChannel = peerConnection.createDataChannel("a47-file-transfer", {

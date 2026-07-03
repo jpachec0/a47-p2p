@@ -41,9 +41,10 @@ async function main(): Promise<void> {
     .command("send")
     .description("Send one file to a peer.")
     .argument("<path>", "Path to the file to send.")
-    .requiredOption("--room <room>", "Room code shared with the receiver.")
+    .option("--room <room>", "Room code shared with the receiver.")
     .option("--server <url>", "Signaling server URL.")
-    .action(async (filePath: string, options: { room?: string; server?: string }) => {
+    .option("--manual", "Use copy-paste manual signaling without a signaling server.")
+    .action(async (filePath: string, options: { manual?: boolean; room?: string; server?: string }) => {
       await runSendCommand(filePath, options);
     });
 
@@ -53,7 +54,8 @@ async function main(): Promise<void> {
     .option("--room <room>", "Room code shared with the sender. A room is generated when omitted.")
     .option("--output <dir>", "Output directory.")
     .option("--server <url>", "Signaling server URL.")
-    .action(async (options: { room?: string; output?: string; server?: string }) => {
+    .option("--manual", "Use copy-paste manual signaling without a signaling server.")
+    .action(async (options: { manual?: boolean; room?: string; output?: string; server?: string }) => {
       await runReceiveCommand(options);
     });
 

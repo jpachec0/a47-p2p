@@ -9,6 +9,8 @@ Usage:
   a47 version
   a47 send <path> --room <room> [--server <url>]
   a47 receive [--room <room>] [--output <dir>] [--server <url>]
+  a47 send <path> --manual
+  a47 receive --manual
   a47 <file-path>
   a47 signaling [--host <host>] [--port <port>]
   a47 config get <key>
@@ -30,6 +32,12 @@ Direct commands:
 
   a47 receive
       Generate a room code automatically and wait for a sender.
+
+  a47 receive --manual
+      Generate an offer code for copy-paste signaling without any signaling server.
+
+  a47 send <path> --manual
+      Send a file by pasting the receiver offer code and returning an answer code.
 
   a47 ./file.zip
       Start the send flow for a file path or a file dragged onto the executable.
@@ -55,6 +63,7 @@ Signaling server:
   and WebRTC negotiation. Files do not pass through the signaling server.
   Run a47 signaling before using local ws://localhost:4747 transfers.
   For different computers, run the server on one machine and use ws://<server-ip>:4747.
+  Use --manual to avoid the signaling server entirely and exchange codes by copy-paste.
 
 Configuration:
   Supported keys: server, chunk-size, ice-servers.

@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 14 - Throughput and normal-user transfer flow.
+Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 
 ## Completed Tasks
 
@@ -84,23 +84,31 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Tagged and published `v0.1.1`.
 - Verified that the GitHub Actions release workflow completed successfully for `v0.1.1`.
 - Verified that all expected `v0.1.1` release assets are attached to the GitHub Release.
+- Added zero-server manual signaling with copy-paste `A47-OFFER-...` and `A47-ANSWER-...` codes.
+- Added `a47 receive --manual` and `a47 send <path> --manual`.
+- Added manual signaling unit coverage and manual WebRTC transfer integration coverage.
+- Updated documentation to make the WebSocket signaling server optional rather than required infrastructure.
+- Bumped the package version to `0.1.2` for the manual signaling patch release.
+- Validated manual signaling with TypeScript checks, the full automated test suite, build, CLI help smoke checks, and a missing-file manual send smoke check.
 
 ## Pending Tasks
 
 - Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
-- Implement a production public signaling URL and short-lived TURN credential endpoint.
+- Commit, tag, and publish `v0.1.2`.
+- Plan LAN discovery and distributed discovery so users can avoid copy-paste codes without requiring official public infrastructure.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- Transfers between different homes still need a public signaling server URL reachable by both peers.
+- Manual signaling is available for zero-server setup, but it requires copy-paste offer and answer codes.
 - Some restrictive NAT/firewall combinations require TURN relay support; STUN alone is not guaranteed.
-- The project still needs an implemented production TURN credential endpoint before public cross-network transfer can be considered fully user-ready.
+- Fully automatic cross-network discovery without manual codes still needs LAN discovery, distributed discovery, or user-provided signaling.
 
 ## Next Actions
 
 - Run a real large-file LAN benchmark with the released `v0.1.1` binaries.
-- Design and implement the public signaling and short-lived TURN credential service.
+- Publish `v0.1.2`.
+- Design LAN discovery and distributed discovery.
 
 ## Decisions Already Made
 
@@ -127,6 +135,7 @@ Phase 14 - Throughput and normal-user transfer flow.
 - The `v0.1.1` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.1`.
 - Installed users can run the signaling server with `a47 signaling --port 4747`.
 - LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
+- Users can avoid the signaling server entirely with `a47 receive --manual` and `a47 send <path> --manual`.
 - Receiver commands may omit `--room`; A47 generates a room code in the `A47-XXXXXX` format.
 - Typed room codes are normalized to uppercase.
 - Opening the CLI with a file path starts the send flow for that file.
@@ -136,9 +145,25 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 - Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
 - The latest release version is `v0.1.1`.
+- The next release version is `v0.1.2`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
 - `README.md`
+- `docs/CLI.md`
+- `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
+- `docs/SIGNALING.md`
+- `docs/TURN_CREDENTIALS.md`
+- `docs/WEBRTC.md`
+- `package.json`
+- `package-lock.json`
+- `src/cli.ts`
+- `src/commands/help.ts`
+- `src/commands/receive.ts`
+- `src/commands/send.ts`
+- `src/webrtc/manual-signaling.ts`
+- `src/webrtc/peer.ts`
+- `tests/manual-signaling.test.ts`
+- `tests/manual-transfer-integration.test.ts`

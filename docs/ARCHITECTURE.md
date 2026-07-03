@@ -6,8 +6,9 @@ A47 P2P is a Node.js command-line application for direct peer-to-peer file trans
 
 - CLI: parses direct commands and starts the interactive terminal interface.
 - Interactive UI: provides a terminal-only menu for common actions.
-- Signaling client: connects to a WebSocket signaling server and exchanges session metadata.
-- Signaling server: relays room and WebRTC negotiation messages between two peers and can be started with `a47 signaling`.
+- Manual signaling: exchanges WebRTC offer and answer metadata through copy-paste codes.
+- Signaling client: connects to an optional WebSocket signaling server and exchanges session metadata.
+- Signaling server: optionally relays room and WebRTC negotiation messages between two peers and can be started with `a47 signaling`.
 - WebRTC peer layer: wraps `werift` so transfer code does not depend directly on low-level WebRTC details.
 - Transfer layer: streams files into 256 KiB chunks, sends them over a DataChannel with backpressure, and verifies SHA-256 hashes.
 - Configuration layer: stores and resolves defaults such as the signaling server URL.
@@ -16,14 +17,15 @@ A47 P2P is a Node.js command-line application for direct peer-to-peer file trans
 
 - `src/cli.ts` defines the `a47` command and direct subcommands.
 - `src/commands/interactive.ts` provides the terminal-only menu.
-- `src/signaling/server.ts` runs the local WebSocket signaling server for development scripts and the installed `a47 signaling` command.
+- `src/webrtc/manual-signaling.ts` implements zero-server copy-paste signaling.
+- `src/signaling/server.ts` runs the optional WebSocket signaling server for development scripts and the installed `a47 signaling` command.
 - `src/webrtc/peer.ts` wraps `werift` peer connection and DataChannel behavior.
 - `src/transfer/sender.ts` and `src/transfer/receiver.ts` implement chunked transfer and hash verification.
 
 ## Data Flow
 
-1. The receiver joins a room, generating an `A47-XXXXXX` code when no room is provided.
-2. The signaling server relays WebRTC offer, answer, and ICE candidate messages.
+1. The receiver starts either manual signaling or WebSocket signaling.
+2. Manual signaling exchanges offer and answer codes by copy-paste, while WebSocket signaling relays WebRTC offer, answer, and ICE candidate messages.
 3. Peers establish a WebRTC DataChannel.
 4. File metadata is sent directly through the DataChannel.
 5. The receiver accepts or rejects the incoming file.

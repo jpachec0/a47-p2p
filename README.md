@@ -60,7 +60,9 @@ a47 version
 a47 signaling --port 4747
 a47 signaling --host 0.0.0.0 --port 4747
 a47 receive
+a47 receive --manual
 a47 send ./file.zip --room my-room
+a47 send ./file.zip --manual
 a47 receive --room my-room
 a47 ./file.zip
 a47 send ./file.zip --room my-room --server ws://localhost:4747
@@ -115,13 +117,22 @@ a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
 
 If you see `Unable to connect to signaling server` or `connection refused`, the signaling server is not running at that URL, the wrong host was used, or a firewall is blocking the port.
 
-For transfers between different homes or networks without typing an IP address, A47 needs a public WebSocket signaling server and NAT traversal support. The CLI includes public STUN servers for WebRTC candidate discovery and lets users configure custom STUN/TURN URLs through `a47 config set ice-servers`. Some restrictive networks require an authenticated TURN relay.
+For zero-server transfers, use manual signaling:
+
+```bash
+a47 receive --manual
+a47 send ./example.txt --manual
+```
+
+Manual signaling uses copy-paste offer and answer codes instead of a WebSocket signaling server. Files still transfer directly over WebRTC DataChannels. STUN may connect peers across some networks, while restrictive networks can still require TURN.
+
+The WebSocket signaling server is optional for convenience, local testing, LAN/self-hosted usage, or future discovery modes. It is not required by the manual signaling flow.
 
 ## Architecture Summary
 
-A47 uses a Node.js CLI, a WebSocket signaling server, and WebRTC DataChannels through `werift`.
+A47 uses a Node.js CLI, optional signaling modes, and WebRTC DataChannels through `werift`.
 
-The sender and receiver join the same signaling room. The signaling server relays offer, answer, and ICE candidate messages. Once WebRTC connects, file metadata, file chunks, completion messages, and hash verification messages move directly over the DataChannel.
+In WebSocket signaling mode, the sender and receiver join the same signaling room. In manual signaling mode, users copy and paste offer and answer codes. Once WebRTC connects, file metadata, file chunks, completion messages, and hash verification messages move directly over the DataChannel.
 
 ## Security Notes
 
@@ -149,7 +160,7 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 Current published release: `v0.1.1`.
 
-The `v0.1.1` release includes the signaling command, generated room codes, file launch flow, transfer throughput improvements, configurable ICE servers, and deployment documentation. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.1` is pushed.
+The `develop` branch is preparing `v0.1.2` with zero-server manual signaling. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.2` is pushed.
 
 Expected release assets:
 

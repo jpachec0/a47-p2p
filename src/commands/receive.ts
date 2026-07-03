@@ -1,4 +1,4 @@
-import { confirm } from "@inquirer/prompts";
+import { confirm, input } from "@inquirer/prompts";
 
 import { DEFAULT_OUTPUT_DIRECTORY, loadConfig } from "../config/config.js";
 import { SignalingClient } from "../signaling/client.js";
@@ -6,9 +6,11 @@ import { generateRoomCode, normalizeRoomCode } from "../signaling/rooms.js";
 import type { FileMetaMessage } from "../transfer/protocol.js";
 import { receiveFile } from "../transfer/receiver.js";
 import { resolveOutputDirectory } from "../utils/paths.js";
+import { createManualReceiverOffer } from "../webrtc/manual-signaling.js";
 import { createReceiverPeer } from "../webrtc/peer.js";
 
 export interface ReceiveCommandOptions {
+  manual?: boolean;
   room?: string;
   output?: string;
   server?: string;
@@ -19,6 +21,11 @@ export async function runReceiveCommand(options: ReceiveCommandOptions): Promise
   const config = await loadConfig();
   const serverUrl = options.server?.trim() || config.signalingServerUrl;
   const outputDirectory = await resolveOutputDirectory(options.output?.trim() || DEFAULT_OUTPUT_DIRECTORY);
+
+  if (options.manual) {
+    await runManualReceive(outputDirectory, config);
+    return;
+  }
 
   const signalingClient = new SignalingClient(serverUrl);
 
@@ -40,6 +47,31 @@ export async function runReceiveCommand(options: ReceiveCommandOptions): Promise
   } finally {
     signalingClient.close();
   }
+}
+
+async function runManualReceive(
+  outputDirectory: string,
+  config: Awaited<ReturnType<typeof loadConfig>>
+): Promise<void> {
+  console.log("Manual signaling mode does not use the WebSocket signaling server.");
+  const manualOffer = await createManualReceiverOffer(config.iceServers);
+
+  console.log("");
+  console.log("Paste this offer code into the sender:");
+  console.log(manualOffer.offerCode);
+  console.log("");
+
+  const answerCode = await input({ message: "Paste sender answer code" });
+  const peer = await manualOffer.answer(answerCode);
+
+  const outputPath = await receiveFile({
+    acceptFile: promptTransferAcceptance,
+    outputDirectory,
+    peer
+  });
+
+  console.log(`Saved file: ${outputPath}`);
+  await peer.close();
 }
 
 async function promptTransferAcceptance(metadata: FileMetaMessage): Promise<boolean> {

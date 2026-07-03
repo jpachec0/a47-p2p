@@ -27,6 +27,22 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 
 The transfer layer should use a small wrapper API instead of depending directly on `werift` internals.
 
+## Manual Signaling Flow
+
+Manual signaling removes the WebSocket signaling server from connection setup.
+
+1. The receiver runs `a47 receive --manual`.
+2. The receiver creates a WebRTC peer connection and DataChannel.
+3. The receiver creates an offer, gathers ICE candidates, and prints an `A47-OFFER-...` code.
+4. The sender runs `a47 send <path> --manual`.
+5. The sender pastes the receiver offer code.
+6. The sender creates an answer, gathers ICE candidates, and prints an `A47-ANSWER-...` code.
+7. The receiver pastes the sender answer code.
+8. Peers establish the DataChannel directly when ICE connectivity succeeds.
+9. File transfer uses the same chunked transfer protocol as WebSocket signaling mode.
+
+Manual signaling is fully serverless, but it requires users to copy and paste codes. It can still fail on restrictive networks unless the configured ICE servers provide a usable path.
+
 ## NAT Traversal
 
 A47 configures public STUN servers by default so peers can discover usable WebRTC candidates outside a single LAN in many home-network cases.
@@ -48,6 +64,8 @@ The current wrapper exposes:
 ```ts
 createSenderPeer(options)
 createReceiverPeer(options)
+createManualReceiverOffer(options)
+createManualSenderAnswer(options)
 peer.onData(callback)
 peer.onClose(callback)
 peer.send(payload)
