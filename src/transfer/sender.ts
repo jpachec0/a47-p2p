@@ -68,6 +68,30 @@ function waitForTransferMessage<TType extends TransferControlMessage["type"]>(
   messageType: TType
 ): Promise<Extract<TransferControlMessage, { type: TType }>> {
   return new Promise((resolve, reject) => {
+    let isSettled = false;
+
+    const rejectOnce = (error: Error): void => {
+      if (isSettled) {
+        return;
+      }
+
+      isSettled = true;
+      reject(error);
+    };
+
+    const resolveOnce = (message: Extract<TransferControlMessage, { type: TType }>): void => {
+      if (isSettled) {
+        return;
+      }
+
+      isSettled = true;
+      resolve(message);
+    };
+
+    peer.onClose(() => {
+      rejectOnce(new Error("Transfer interrupted because the peer disconnected."));
+    });
+
     peer.onData((payload) => {
       if (typeof payload !== "string") {
         return;
@@ -76,14 +100,14 @@ function waitForTransferMessage<TType extends TransferControlMessage["type"]>(
       try {
         const message = JSON.parse(payload) as TransferControlMessage;
         if (message.type === "file-error") {
-          reject(new Error(message.message));
+          rejectOnce(new Error(message.message));
         }
 
         if (message.type === messageType) {
-          resolve(message as Extract<TransferControlMessage, { type: TType }>);
+          resolveOnce(message as Extract<TransferControlMessage, { type: TType }>);
         }
       } catch {
-        reject(new Error("Received an invalid transfer control message."));
+        rejectOnce(new Error("Received an invalid transfer control message."));
       }
     });
   });

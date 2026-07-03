@@ -1,10 +1,11 @@
-import { mkdtemp, readdir } from "node:fs/promises";
+import { mkdtemp, readdir, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { RTCDataChannel } from "werift";
 
 import { receiveFile } from "../src/transfer/receiver.js";
+import { sendFile } from "../src/transfer/sender.js";
 import { encodeTransferMessage, TRANSFER_PROTOCOL_VERSION } from "../src/transfer/protocol.js";
 import type { A47Peer, DataChannelPayload } from "../src/webrtc/peer.js";
 
@@ -60,6 +61,20 @@ describe("transfer failure handling", () => {
 
     await expect(receivePromise).rejects.toThrow("Transfer interrupted because the peer disconnected.");
     await expect(readdir(outputDirectory)).resolves.toEqual([]);
+  });
+
+  it("rejects an interrupted send while waiting for the receiver", async () => {
+    const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "a47-interrupted-send-"));
+    const filePath = path.join(temporaryDirectory, "send.txt");
+    const peer = new FakePeer();
+
+    await writeFile(filePath, "send data", "utf8");
+
+    const sendPromise = sendFile({ filePath, peer });
+    await peer.waitForSentMessage((message) => message.includes('"type":"file-meta"'));
+    peer.emitClose();
+
+    await expect(sendPromise).rejects.toThrow("Transfer interrupted because the peer disconnected.");
   });
 });
 

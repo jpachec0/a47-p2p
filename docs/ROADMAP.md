@@ -58,4 +58,4 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 9 have an MVP implementation. Phase 10 now includes signaling and WebRTC transfer integration tests, hash mismatch cleanup coverage, interrupted receive cleanup coverage, and opt-in debug stack traces. Broader interrupted-peer and sender-side failure coverage can still be expanded. Phases 11 through 14 are partially covered through documentation, validation, and installer templates.
+Phases 1 through 9 have an MVP implementation. Phase 10 now includes signaling and WebRTC transfer integration tests, hash mismatch cleanup coverage, interrupted receive cleanup coverage, interrupted sender handling, and opt-in debug stack traces. Broader transfer failure coverage can still be expanded. Phases 11 through 14 are partially covered through documentation, validation, and installer templates.

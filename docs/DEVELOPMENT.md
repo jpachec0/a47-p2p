@@ -41,7 +41,7 @@ npm run build
 npm test
 ```
 
-The test suite includes unit tests for config, path handling, error output, and transfer protocol helpers, plus integration tests for the signaling relay, hash mismatch cleanup, interrupted receive cleanup, and a small WebRTC DataChannel file transfer.
+The test suite includes unit tests for config, path handling, error output, and transfer protocol helpers, plus integration tests for the signaling relay, hash mismatch cleanup, interrupted receive cleanup, interrupted sender handling, and a small WebRTC DataChannel file transfer.
 
 ## Debugging
 

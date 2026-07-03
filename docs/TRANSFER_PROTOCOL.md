@@ -43,6 +43,8 @@ If the hash does not match, the receiver removes the failed output file and repo
 
 If the receiver detects that the peer disconnected before the transfer is complete, it rejects the transfer and removes the partial output file.
 
+If the sender detects that the peer disconnected while waiting for receiver acceptance or hash verification, it rejects the transfer with a readable interruption error.
+
 ## Test Coverage
 
 The automated integration suite transfers a small file through the real signaling server, `werift` peer layer, and WebRTC DataChannel path. It verifies that the received file content matches the source file.
@@ -51,3 +53,4 @@ Failure-path coverage includes:
 
 - A hash mismatch test that confirms the receiver rejects the transfer, sends a failed hash result, and removes the failed output file.
 - An interrupted receive test that confirms the receiver rejects the transfer and removes the partial output file when the peer disconnects early.
+- An interrupted send test that confirms the sender rejects the transfer when the peer disconnects before receiver acceptance.

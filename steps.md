@@ -39,10 +39,11 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Removed stale known-issue text about the project directory being empty.
 - Added receiver interruption handling through the peer close hook.
 - Added interrupted receive failure-path coverage that verifies partial output cleanup.
+- Added sender interruption handling while waiting for receiver transfer responses.
+- Added sender-side interruption coverage.
 
 ## Pending Tasks
 
-- Add sender-side transfer failure-path tests.
 - Add authentication or stronger room protection for signaling.
 - Create GitHub Actions release workflow.
 - Generate actual Windows, Linux, and macOS binary assets.
@@ -54,7 +55,6 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 
 ## Next Actions
 
-- Add sender-side interruption tests.
 - Choose a binary packaging tool and add CI release automation.
 
 ## Decisions Already Made
@@ -73,6 +73,7 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - The `--server` command option overrides the saved default server for that single command.
 - Raw stack traces are hidden by default and require `--debug` or `A47_DEBUG=1`.
 - Receiver-side interrupted transfers remove partial output files.
+- Sender-side interrupted transfers fail with a readable peer disconnected error.
 
 ## Files Changed in the Latest Step
 
@@ -80,7 +81,5 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
 - `docs/TRANSFER_PROTOCOL.md`
-- `docs/WEBRTC.md`
-- `src/transfer/receiver.ts`
-- `src/webrtc/peer.ts`
+- `src/transfer/sender.ts`
 - `tests/transfer-failure.test.ts`
