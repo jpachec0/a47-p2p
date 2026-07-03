@@ -90,11 +90,14 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 - Updated documentation to make the WebSocket signaling server optional rather than required infrastructure.
 - Bumped the package version to `0.1.2` for the manual signaling patch release.
 - Validated manual signaling with TypeScript checks, the full automated test suite, build, CLI help smoke checks, and a missing-file manual send smoke check.
+- Committed and pushed zero-server manual signaling to `develop`.
+- Tagged and published `v0.1.2`.
+- Verified that the GitHub Actions release workflow completed successfully for `v0.1.2`.
+- Verified that all expected `v0.1.2` release assets are attached to the GitHub Release.
 
 ## Pending Tasks
 
 - Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
-- Commit, tag, and publish `v0.1.2`.
 - Plan LAN discovery and distributed discovery so users can avoid copy-paste codes without requiring official public infrastructure.
 
 ## Known Issues
@@ -107,7 +110,7 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 ## Next Actions
 
 - Run a real large-file LAN benchmark with the released `v0.1.1` binaries.
-- Publish `v0.1.2`.
+- Run a real manual signaling transfer with the released `v0.1.2` binaries on two machines.
 - Design LAN discovery and distributed discovery.
 
 ## Decisions Already Made
@@ -133,6 +136,7 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 - The first release tag is `v0.1.0`.
 - The `v0.1.0` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.0`.
 - The `v0.1.1` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.1`.
+- The `v0.1.2` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.2`.
 - Installed users can run the signaling server with `a47 signaling --port 4747`.
 - LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
 - Users can avoid the signaling server entirely with `a47 receive --manual` and `a47 send <path> --manual`.
@@ -144,26 +148,10 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 - ICE server URLs are configurable through the `ice-servers` config key.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 - Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
-- The latest release version is `v0.1.1`.
-- The next release version is `v0.1.2`.
+- The latest release version is `v0.1.2`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
 - `README.md`
-- `docs/CLI.md`
-- `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `docs/SIGNALING.md`
-- `docs/TURN_CREDENTIALS.md`
-- `docs/WEBRTC.md`
-- `package.json`
-- `package-lock.json`
-- `src/cli.ts`
-- `src/commands/help.ts`
-- `src/commands/receive.ts`
-- `src/commands/send.ts`
-- `src/webrtc/manual-signaling.ts`
-- `src/webrtc/peer.ts`
-- `tests/manual-signaling.test.ts`
-- `tests/manual-transfer-integration.test.ts`
