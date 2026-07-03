@@ -147,9 +147,9 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 ## Install for Users
 
-Current published release: `v0.1.0`.
+Current published release: `v0.1.1`.
 
-The `develop` branch is preparing package version `0.1.1` with the new signaling command, room generation, and throughput work. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.1` is pushed.
+The `v0.1.1` release includes the signaling command, generated room codes, file launch flow, transfer throughput improvements, configurable ICE servers, and deployment documentation. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.1` is pushed.
 
 Expected release assets:
 

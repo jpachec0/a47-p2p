@@ -80,24 +80,27 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Added `docs/TURN_CREDENTIALS.md` with the short-lived TURN credential distribution strategy.
 - Re-evaluated the next release version and selected `v0.1.1` for the user-flow, throughput, signaling command, configurable ICE, and deployment-preparation work.
 - Validated the final documentation and release state with TypeScript checks, automated tests, and build.
+- Committed and pushed the TURN credential strategy to `develop`.
+- Tagged and published `v0.1.1`.
+- Verified that the GitHub Actions release workflow completed successfully for `v0.1.1`.
+- Verified that all expected `v0.1.1` release assets are attached to the GitHub Release.
 
 ## Pending Tasks
 
-- Commit and push the TURN credential strategy.
-- Tag and publish `v0.1.1`.
+- Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
+- Implement a production public signaling URL and short-lived TURN credential endpoint.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` but not yet released.
 - Transfers between different homes still need a public signaling server URL reachable by both peers.
 - Some restrictive NAT/firewall combinations require TURN relay support; STUN alone is not guaranteed.
 - The project still needs an implemented production TURN credential endpoint before public cross-network transfer can be considered fully user-ready.
 
 ## Next Actions
 
-- Run final validation and publish `v0.1.1`.
-- After release, run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
+- Run a real large-file LAN benchmark with the released `v0.1.1` binaries.
+- Design and implement the public signaling and short-lived TURN credential service.
 
 ## Decisions Already Made
 
@@ -121,6 +124,7 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Pushing a `v*` tag runs the GitHub Actions release workflow and publishes release assets.
 - The first release tag is `v0.1.0`.
 - The `v0.1.0` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.0`.
+- The `v0.1.1` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.1`.
 - Installed users can run the signaling server with `a47 signaling --port 4747`.
 - LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
 - Receiver commands may omit `--room`; A47 generates a room code in the `A47-XXXXXX` format.
@@ -131,22 +135,10 @@ Phase 14 - Throughput and normal-user transfer flow.
 - ICE server URLs are configurable through the `ice-servers` config key.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 - Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
-- The next release version is `v0.1.1`.
+- The latest release version is `v0.1.1`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
-- `.dockerignore`
-- `Dockerfile.signaling`
 - `README.md`
-- `docs/CLI.md`
-- `docs/DEPLOYMENT.md`
-- `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `docs/SIGNALING.md`
-- `docs/WEBRTC.md`
-- `docs/SECURITY.md`
-- `docs/TURN_CREDENTIALS.md`
-- `package.json`
-- `src/config/config.ts`
-- `tests/config.test.ts`

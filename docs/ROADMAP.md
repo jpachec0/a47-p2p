@@ -58,9 +58,9 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 14 have an MVP implementation path. The first release tag, `v0.1.0`, has been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
+Phases 1 through 14 have an MVP implementation path. Release tags `v0.1.0` and `v0.1.1` have been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
 
-The next patch release is `v0.1.1`. It exposes the signaling server through the installed `a47 signaling` command and documents how to use a reachable server URL instead of `localhost` when sender and receiver run on different computers.
+The `v0.1.1` release exposes the signaling server through the installed `a47 signaling` command and documents how to use a reachable server URL instead of `localhost` when sender and receiver run on different computers.
 
 The current development focus is higher transfer throughput and a normal-user flow:
 
@@ -73,11 +73,9 @@ The current development focus is higher transfer throughput and a normal-user fl
 - Docker-based public signaling deployment notes.
 - Public signaling and short-lived TURN credential distribution planning so users on different networks do not need to exchange IP addresses.
 
-## Release Decision
+## Release Status
 
-The next release should be `v0.1.1`.
-
-It should include:
+The `v0.1.1` release includes:
 
 - Installed `a47 signaling` command.
 - Receiver-generated room codes.
@@ -88,4 +86,4 @@ It should include:
 - Public signaling Docker deployment notes.
 - TURN credential distribution plan.
 
-Public cross-network transfer without manual infrastructure is not complete until a production signaling URL and short-lived TURN credential endpoint are deployed.
+Public cross-network transfer without manual infrastructure is still not complete until a production signaling URL and short-lived TURN credential endpoint are deployed.
