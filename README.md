@@ -89,6 +89,8 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 ## Install for Users
 
+Current release: `v0.1.0`.
+
 User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.0` is pushed.
 
 Expected release assets:

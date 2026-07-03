@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 14 - Release workflow and user-ready binary packaging.
+Phase 14 - First user-ready release published.
 
 ## Completed Tasks
 
@@ -48,21 +48,22 @@ Phase 14 - Release workflow and user-ready binary packaging.
 - Generated and locally validated the Linux release binary.
 - Updated installer scripts to use the project GitHub Releases URL by default.
 - Prepared the first release tag: `v0.1.0`.
+- Pushed the `v0.1.0` tag to GitHub.
+- Verified that the GitHub Actions release workflow completed successfully.
+- Verified that all expected release assets are attached to the GitHub Release.
 
 ## Pending Tasks
 
-- Monitor the `v0.1.0` GitHub Actions release workflow.
-- Verify that all release assets are attached to the GitHub Release.
+- No current MVP release tasks are pending.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- The official release assets depend on the `v0.1.0` GitHub Actions workflow completing successfully.
 
 ## Next Actions
 
-- Push the `v0.1.0` tag.
-- Check the GitHub Actions release workflow and verify the attached release assets.
+- Monitor user feedback from the `v0.1.0` release.
+- Plan the next release scope.
 
 ## Decisions Already Made
 
@@ -85,8 +86,10 @@ Phase 14 - Release workflow and user-ready binary packaging.
 - Release binaries are generated with `@yao-pkg/pkg`.
 - Pushing a `v*` tag runs the GitHub Actions release workflow and publishes release assets.
 - The first release tag is `v0.1.0`.
+- The `v0.1.0` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.0`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
+- `README.md`
 - `docs/ROADMAP.md`

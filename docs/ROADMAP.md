@@ -58,4 +58,4 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 14 have an MVP implementation path. Release scripts and GitHub Actions can generate Windows, Linux, and macOS assets. The first release tag is `v0.1.0`; after it is pushed, GitHub Actions publishes the release assets.
+Phases 1 through 14 have an MVP implementation path. The first release tag, `v0.1.0`, has been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
