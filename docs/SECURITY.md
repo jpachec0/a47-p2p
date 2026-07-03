@@ -8,6 +8,7 @@ A47 is designed so transferred files do not pass through the signaling server.
 - The signaling server only relays metadata needed for peer negotiation.
 - SHA-256 hashes verify file integrity after transfer.
 - The CLI avoids printing raw stack traces during normal errors.
+- Raw stack traces require `--debug` or `A47_DEBUG=1`.
 
 ## Current Limitations
 

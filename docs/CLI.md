@@ -13,6 +13,7 @@ a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
 a47 config get server
 a47 config set server ws://localhost:4747
+a47 --debug send ./file.zip --room my-room
 ```
 
 ## Interactive Mode
@@ -54,3 +55,16 @@ a47 config set chunk-size 65536
 ```
 
 Command-line options such as `--server` override saved defaults for a single command.
+
+## Debug Mode
+
+Normal CLI errors are human-readable and do not print raw stack traces.
+
+Use debug mode only when troubleshooting:
+
+```bash
+a47 --debug send ./file.zip --room my-room
+A47_DEBUG=1 a47 receive --room my-room
+```
+
+The `--debug` option must be passed before the subcommand. The `A47_DEBUG=1` environment variable works with any command form.

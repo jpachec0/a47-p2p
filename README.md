@@ -51,6 +51,7 @@ a47 send ./file.zip --room my-room --server ws://localhost:4747
 a47 receive --room my-room --output ./downloads
 a47 config get server
 a47 config set server ws://localhost:4747
+a47 --debug send ./file.zip --room my-room
 ```
 
 ## Architecture Summary
@@ -62,6 +63,8 @@ The sender and receiver join the same signaling room. The signaling server relay
 ## Security Notes
 
 Files do not pass through the signaling server. WebRTC provides encrypted transport for the DataChannel. A47 also calculates SHA-256 hashes to verify file integrity after transfer.
+
+Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=1` only when troubleshooting.
 
 ## Limitations
 

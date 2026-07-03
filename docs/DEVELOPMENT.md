@@ -43,6 +43,17 @@ npm test
 
 The test suite includes unit tests for config, path handling, and transfer protocol helpers, plus integration tests for the signaling relay and a small WebRTC DataChannel file transfer.
 
+## Debugging
+
+The CLI hides raw stack traces during normal use. Enable debug output when investigating failures:
+
+```bash
+node dist/cli.js --debug config get unknown
+A47_DEBUG=1 node dist/cli.js config get unknown
+```
+
+Use normal output in user-facing examples and debug output only for development or issue reports.
+
 ## Local MVP Validation
 
 Terminal 1:

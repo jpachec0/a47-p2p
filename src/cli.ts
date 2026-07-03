@@ -7,8 +7,8 @@ import { runReceiveCommand } from "./commands/receive.js";
 import { runSendCommand } from "./commands/send.js";
 import { showHelp } from "./commands/help.js";
 import { showVersion } from "./commands/version.js";
-import { getReadableError } from "./utils/errors.js";
-import { printError } from "./utils/logger.js";
+import { getDebugError, getReadableError, isDebugModeEnabled } from "./utils/errors.js";
+import { printDebugError, printError } from "./utils/logger.js";
 
 async function main(): Promise<void> {
   const program = new Command();
@@ -16,6 +16,7 @@ async function main(): Promise<void> {
   program
     .name("a47")
     .description("A47 P2P is a command-line peer-to-peer file transfer tool using WebRTC DataChannels.")
+    .option("--debug", "Print raw stack traces for troubleshooting.")
     .allowExcessArguments(false)
     .showHelpAfterError(false)
     .helpOption(false);
@@ -86,6 +87,11 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  printError(getReadableError(error));
+  if (isDebugModeEnabled()) {
+    printDebugError(getDebugError(error));
+  } else {
+    printError(getReadableError(error));
+  }
+
   process.exitCode = 1;
 });

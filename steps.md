@@ -33,10 +33,11 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Added signaling integration tests for relay behavior and two-peer room limits.
 - Added a WebRTC transfer integration test using a real signaling server and DataChannel.
 - Hardened `receiveFile` so it creates the output directory when needed.
+- Added opt-in debug mode through `--debug` and `A47_DEBUG=1`.
+- Added error utility tests for readable and debug error output.
 
 ## Pending Tasks
 
-- Add debug mode for raw stack traces when needed.
 - Add more transfer failure-path tests.
 - Add authentication or stronger room protection for signaling.
 - Create GitHub Actions release workflow.
@@ -50,7 +51,6 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 
 ## Next Actions
 
-- Add debug mode for raw stack traces when needed.
 - Add transfer interruption and hash mismatch tests.
 - Choose a binary packaging tool and add CI release automation.
 
@@ -68,14 +68,18 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Future user release assets should use the names documented in README and `docs/DEVELOPMENT.md`.
 - Persistent configuration is stored at `.a47/config.json` under the user's home directory.
 - The `--server` command option overrides the saved default server for that single command.
+- Raw stack traces are hidden by default and require `--debug` or `A47_DEBUG=1`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
+- `README.md`
+- `docs/CLI.md`
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
-- `docs/SIGNALING.md`
-- `docs/TRANSFER_PROTOCOL.md`
-- `src/transfer/receiver.ts`
-- `tests/signaling.test.ts`
-- `tests/transfer-integration.test.ts`
+- `docs/SECURITY.md`
+- `src/cli.ts`
+- `src/commands/help.ts`
+- `src/utils/errors.ts`
+- `src/utils/logger.ts`
+- `tests/errors.test.ts`

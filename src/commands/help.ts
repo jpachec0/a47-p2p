@@ -11,6 +11,7 @@ Usage:
   a47 receive --room <room> [--output <dir>] [--server <url>]
   a47 config get <key>
   a47 config set <key> <value>
+  a47 --debug send <path> --room <room>
 
 Direct commands:
   a47 help
@@ -40,6 +41,9 @@ Signaling server:
 
 Configuration:
   Supported keys: server, chunk-size.
+
+Debugging:
+  Use --debug or A47_DEBUG=1 to print raw stack traces for troubleshooting.
 `;
 }
 
