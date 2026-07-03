@@ -66,6 +66,25 @@ describe("signaling server", () => {
       await closeServer(server);
     }
   });
+
+  it("rejects weak or unsafe room codes", async () => {
+    const server = await startTestSignalingServer();
+    const serverUrl = getServerUrl(server);
+    const client = new SignalingClient(serverUrl);
+
+    try {
+      await client.connect();
+
+      await expect(client.join("abc")).rejects.toThrow("Room must be between 4 and 64 characters.");
+      await expect(client.join("unsafe room")).rejects.toThrow(
+        "Room may only contain letters, numbers, dots, underscores, and hyphens."
+      );
+      await expect(client.join("a".repeat(65))).rejects.toThrow("Room must be between 4 and 64 characters.");
+    } finally {
+      client.close();
+      await closeServer(server);
+    }
+  });
 });
 
 async function startTestSignalingServer(): Promise<WebSocketServer> {

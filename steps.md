@@ -41,10 +41,11 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Added interrupted receive failure-path coverage that verifies partial output cleanup.
 - Added sender interruption handling while waiting for receiver transfer responses.
 - Added sender-side interruption coverage.
+- Added signaling room code validation and tests.
+- Documented room code rules and signaling room protection.
 
 ## Pending Tasks
 
-- Add authentication or stronger room protection for signaling.
 - Create GitHub Actions release workflow.
 - Generate actual Windows, Linux, and macOS binary assets.
 
@@ -74,12 +75,18 @@ Phase 10 - Reliability, automated coverage, and release hardening after persiste
 - Raw stack traces are hidden by default and require `--debug` or `A47_DEBUG=1`.
 - Receiver-side interrupted transfers remove partial output files.
 - Sender-side interrupted transfers fail with a readable peer disconnected error.
+- Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
+- `docs/CLI.md`
 - `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
+- `docs/SECURITY.md`
+- `docs/SIGNALING.md`
 - `docs/TRANSFER_PROTOCOL.md`
-- `src/transfer/sender.ts`
-- `tests/transfer-failure.test.ts`
+- `src/signaling/rooms.ts`
+- `src/signaling/server.ts`
+- `tests/rooms.test.ts`
+- `tests/signaling.test.ts`

@@ -9,6 +9,7 @@ The signaling server is a lightweight WebSocket relay for peer discovery and Web
 - Relay signaling messages between peers in the same room.
 - Notify peers when another peer joins or leaves.
 - Reject rooms with more than two peers for the MVP.
+- Reject weak or unsafe room codes.
 
 ## Non-Responsibilities
 
@@ -30,6 +31,16 @@ The signaling server is a lightweight WebSocket relay for peer discovery and Web
 
 Message payloads are JSON objects. The full TypeScript shape is defined in `src/signaling/messages.ts`.
 
+## Room Code Rules
+
+Room codes are normalized by trimming surrounding whitespace. The signaling server rejects room codes that do not meet these rules:
+
+- 4 to 64 characters.
+- Letters, numbers, dots, underscores, and hyphens only.
+- No spaces or shell-sensitive symbols.
+
+Room codes are still convenience shared secrets, not full authentication. Use unguessable room codes for real transfers.
+
 ## Running Locally
 
 ```bash
@@ -44,4 +55,4 @@ A47_SIGNALING_PORT=5757 npm run signaling
 
 ## Test Coverage
 
-The automated test suite starts the signaling server on an ephemeral port, verifies room joins, confirms signaling message relay between two peers, and checks that a third peer is rejected from a two-peer MVP room.
+The automated test suite starts the signaling server on an ephemeral port, verifies room joins, confirms signaling message relay between two peers, checks that a third peer is rejected from a two-peer MVP room, and verifies room code validation.

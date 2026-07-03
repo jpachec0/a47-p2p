@@ -30,6 +30,8 @@ Running `a47` without arguments opens a terminal-only interactive menu. The inte
 
 The signaling server helps peers find each other and exchange WebRTC negotiation metadata. Files do not pass through the signaling server.
 
+Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens.
+
 ## Defaults
 
 - Default signaling server: `ws://localhost:4747`

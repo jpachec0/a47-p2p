@@ -7,6 +7,7 @@ import {
   encodeSignalingMessage,
   type SignalingMessage
 } from "./messages.js";
+import { getRoomCodeValidationError, normalizeRoomCode } from "./rooms.js";
 
 interface PeerConnection {
   id: string;
@@ -55,13 +56,14 @@ function handleClientMessage(peer: PeerConnection, rawData: string): void {
 }
 
 function joinRoom(peer: PeerConnection, room: string): void {
-  const normalizedRoom = room.trim();
+  const roomValidationError = getRoomCodeValidationError(room);
 
-  if (!normalizedRoom) {
-    sendToPeer(peer, { type: "error", message: "Room is required." });
+  if (roomValidationError) {
+    sendToPeer(peer, { type: "error", message: roomValidationError });
     return;
   }
 
+  const normalizedRoom = normalizeRoomCode(room);
   const currentRoom = rooms.get(normalizedRoom) ?? new Set<PeerConnection>();
 
   if (currentRoom.size >= 2 && !currentRoom.has(peer)) {
