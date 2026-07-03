@@ -15,10 +15,18 @@ interface PeerConnection {
   room?: string;
 }
 
+export interface SignalingServerOptions {
+  host?: string;
+  port?: number;
+}
+
 const rooms = new Map<string, Set<PeerConnection>>();
 
-export function startSignalingServer(port = DEFAULT_SIGNALING_PORT): WebSocketServer {
-  const server = new WebSocketServer({ port });
+export function startSignalingServer(optionsOrPort: SignalingServerOptions | number = {}): WebSocketServer {
+  const options = typeof optionsOrPort === "number" ? { port: optionsOrPort } : optionsOrPort;
+  const host = options.host;
+  const port = options.port ?? DEFAULT_SIGNALING_PORT;
+  const server = new WebSocketServer({ host, port });
 
   server.on("connection", (socket) => {
     const peer: PeerConnection = {
@@ -31,7 +39,8 @@ export function startSignalingServer(port = DEFAULT_SIGNALING_PORT): WebSocketSe
     socket.on("error", () => removePeerFromRoom(peer));
   });
 
-  console.log(`A47 signaling server is running on ws://localhost:${port}`);
+  const displayedHost = host ?? "localhost";
+  console.log(`A47 signaling server is running on ws://${displayedHost}:${port}`);
   console.log("Files are never uploaded to this server. It only relays signaling metadata.");
 
   return server;
@@ -136,5 +145,6 @@ function sendToPeer(peer: PeerConnection, message: SignalingMessage): void {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const port = Number(process.env.A47_SIGNALING_PORT ?? DEFAULT_SIGNALING_PORT);
-  startSignalingServer(port);
+  const host = process.env.A47_SIGNALING_HOST;
+  startSignalingServer({ host, port });
 }

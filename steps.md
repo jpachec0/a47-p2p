@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 14 - First user-ready release published.
+Phase 14 - Patch release for user-run signaling server.
 
 ## Completed Tasks
 
@@ -51,19 +51,27 @@ Phase 14 - First user-ready release published.
 - Pushed the `v0.1.0` tag to GitHub.
 - Verified that the GitHub Actions release workflow completed successfully.
 - Verified that all expected release assets are attached to the GitHub Release.
+- Added the `a47 signaling` command so installed users can run the WebSocket signaling server without cloning the repository.
+- Added `--host` and `--port` options for local and LAN signaling server usage.
+- Improved the signaling connection error to explain how to start the server or use `ws://<server-ip>:4747`.
+- Updated user and developer documentation for local, LAN, and connection-refused signaling scenarios.
+- Bumped the package version to `0.1.1` for the patch release.
+- Ran TypeScript checks, automated tests, build, and compiled CLI smoke validation for the `v0.1.1` patch.
 
 ## Pending Tasks
 
-- No current MVP release tasks are pending.
+- Commit and push the signaling command fix to `develop`.
+- Tag and publish `v0.1.1` release assets.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
+- The published `v0.1.0` binaries do not expose a user-facing signaling server command; this is fixed on `develop` and will be released as `v0.1.1`.
 
 ## Next Actions
 
-- Monitor user feedback from the `v0.1.0` release.
-- Plan the next release scope.
+- Push the patch commit and publish the `v0.1.1` tag.
+- Verify the GitHub Actions release assets.
 
 ## Decisions Already Made
 
@@ -87,9 +95,24 @@ Phase 14 - First user-ready release published.
 - Pushing a `v*` tag runs the GitHub Actions release workflow and publishes release assets.
 - The first release tag is `v0.1.0`.
 - The `v0.1.0` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.0`.
+- Installed users can run the signaling server with `a47 signaling --port 4747`.
+- LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
+- The next patch release tag is `v0.1.1`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
 - `README.md`
+- `docs/ARCHITECTURE.md`
+- `docs/CLI.md`
+- `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
+- `docs/SIGNALING.md`
+- `package.json`
+- `package-lock.json`
+- `src/cli.ts`
+- `src/commands/help.ts`
+- `src/commands/signaling.ts`
+- `src/signaling/client.ts`
+- `src/signaling/server.ts`
+- `tests/signaling-command.test.ts`

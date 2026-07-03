@@ -32,6 +32,12 @@ Run the local signaling server:
 npm run signaling
 ```
 
+Run the signaling server through the compiled CLI:
+
+```bash
+node dist/cli.js signaling --port 4747
+```
+
 Run checks:
 
 ```bash
@@ -51,6 +57,8 @@ npm run package:binaries
 a47
 a47 help
 a47 version
+a47 signaling --port 4747
+a47 signaling --host 0.0.0.0 --port 4747
 a47 send ./file.zip --room my-room
 a47 receive --room my-room
 a47 send ./file.zip --room my-room --server ws://localhost:4747
@@ -59,6 +67,34 @@ a47 config get server
 a47 config set server ws://localhost:4747
 a47 --debug send ./file.zip --room my-room
 ```
+
+For a local three-terminal test, start the signaling server first:
+
+```bash
+a47 signaling --port 4747
+```
+
+Then run the receiver and sender with the same room:
+
+```bash
+a47 receive --room test-room --server ws://localhost:4747
+a47 send ./example.txt --room test-room --server ws://localhost:4747
+```
+
+For two different computers, `localhost` points to each individual computer. Start the server on one machine with:
+
+```bash
+a47 signaling --host 0.0.0.0 --port 4747
+```
+
+Then use that machine's network address from both peers:
+
+```bash
+a47 receive --room test-room --server ws://<server-ip>:4747
+a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
+```
+
+If you see `Unable to connect to signaling server` or `connection refused`, the signaling server is not running at that URL, the wrong host was used, or a firewall is blocking the port.
 
 ## Architecture Summary
 
@@ -89,9 +125,9 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 ## Install for Users
 
-Current release: `v0.1.0`.
+Current release: `v0.1.1`.
 
-User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.0` is pushed.
+User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.1` is pushed.
 
 Expected release assets:
 

@@ -5,6 +5,7 @@ import { showConfigValue, updateConfigValue } from "./commands/config.js";
 import { runInteractiveMode } from "./commands/interactive.js";
 import { runReceiveCommand } from "./commands/receive.js";
 import { runSendCommand } from "./commands/send.js";
+import { runSignalingCommand } from "./commands/signaling.js";
 import { showHelp } from "./commands/help.js";
 import { showVersion } from "./commands/version.js";
 import { getDebugError, getReadableError, isDebugModeEnabled } from "./utils/errors.js";
@@ -53,6 +54,15 @@ async function main(): Promise<void> {
     .option("--server <url>", "Signaling server URL.")
     .action(async (options: { room?: string; output?: string; server?: string }) => {
       await runReceiveCommand(options);
+    });
+
+  program
+    .command("signaling")
+    .description("Run the local WebSocket signaling server.")
+    .option("--host <host>", "Host interface to bind. Use 0.0.0.0 for LAN access.")
+    .option("--port <port>", "Port to listen on.")
+    .action((options: { host?: string; port?: string }) => {
+      runSignalingCommand(options);
     });
 
   const configCommand = program

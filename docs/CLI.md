@@ -7,6 +7,8 @@ The CLI command is `a47`.
 ```bash
 a47 help
 a47 version
+a47 signaling --port 4747
+a47 signaling --host 0.0.0.0 --port 4747
 a47 send ./file.zip --room my-room
 a47 receive --room my-room
 a47 send ./file.zip --room my-room --server ws://localhost:4747
@@ -30,7 +32,30 @@ Running `a47` without arguments opens a terminal-only interactive menu. The inte
 
 The signaling server helps peers find each other and exchange WebRTC negotiation metadata. Files do not pass through the signaling server.
 
+Installed users can run a local signaling server directly from the CLI:
+
+```bash
+a47 signaling --port 4747
+```
+
+For two computers on the same network, run the server on one computer with:
+
+```bash
+a47 signaling --host 0.0.0.0 --port 4747
+```
+
+Then use that computer's network address from both sender and receiver:
+
+```bash
+a47 receive --room test-room --server ws://<server-ip>:4747
+a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
+```
+
+Do not use `localhost` for both peers when they are on different computers. `localhost` always means the current computer.
+
 Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens.
+
+If a command prints `Unable to connect to signaling server`, start `a47 signaling` first, confirm the URL points to the correct machine, and check whether a firewall is blocking the port.
 
 ## Defaults
 

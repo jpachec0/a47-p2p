@@ -43,6 +43,29 @@ Room codes are still convenience shared secrets, not full authentication. Use un
 
 ## Running Locally
 
+Installed CLI:
+
+```bash
+a47 signaling --port 4747
+```
+
+Installed CLI for LAN access:
+
+```bash
+a47 signaling --host 0.0.0.0 --port 4747
+```
+
+When peers run on different computers, both peers must use the address of the computer running the signaling server:
+
+```bash
+a47 receive --room test-room --server ws://<server-ip>:4747
+a47 send ./example.txt --room test-room --server ws://<server-ip>:4747
+```
+
+`localhost` only works when the CLI command and the signaling server run on the same computer.
+
+Development script:
+
 ```bash
 npm run signaling
 ```
@@ -52,6 +75,14 @@ The default port is `4747`. It can be changed with:
 ```bash
 A47_SIGNALING_PORT=5757 npm run signaling
 ```
+
+The development server can bind a specific host with:
+
+```bash
+A47_SIGNALING_HOST=0.0.0.0 npm run signaling
+```
+
+Connection refused errors mean no signaling server is reachable at the configured URL, the wrong host was used, or the port is blocked.
 
 ## Test Coverage
 

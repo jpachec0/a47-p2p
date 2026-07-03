@@ -23,7 +23,11 @@ export class SignalingClient {
       socket.once("open", () => resolve());
       socket.once("error", (error) => {
         const errorMessage = error.message || "connection refused or unavailable";
-        reject(new A47Error(`Unable to connect to signaling server: ${errorMessage}`));
+        reject(
+          new A47Error(
+            `Unable to connect to signaling server: ${errorMessage}. Start the signaling server with a47 signaling --port 4747, or use ws://<server-ip>:4747 when it runs on another computer.`
+          )
+        );
       });
       socket.on("message", (data) => this.handleMessage(data.toString()));
       socket.on("close", () => {

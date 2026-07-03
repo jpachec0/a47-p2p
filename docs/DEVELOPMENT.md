@@ -33,6 +33,18 @@ HOME=/tmp/a47-config-validation node dist/cli.js config get server
 npm run signaling
 ```
 
+The compiled CLI can also run the server:
+
+```bash
+node dist/cli.js signaling --port 4747
+```
+
+For LAN testing, bind all interfaces and use the host machine's network address from the peers:
+
+```bash
+node dist/cli.js signaling --host 0.0.0.0 --port 4747
+```
+
 ## Quality Checks
 
 ```bash
@@ -59,7 +71,7 @@ Use normal output in user-facing examples and debug output only for development 
 Terminal 1:
 
 ```bash
-npm run signaling
+node dist/cli.js signaling --port 4747
 ```
 
 Terminal 2:
@@ -117,8 +129,8 @@ npm run package:macos:arm64
 Create an official GitHub release by pushing a version tag:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 Linux/macOS uninstall:
