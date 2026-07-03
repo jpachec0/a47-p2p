@@ -66,10 +66,10 @@ Phase 14 - Throughput and normal-user transfer flow.
 - Added default public STUN servers for WebRTC candidate discovery.
 - Updated documentation for the new room, file launch, acceptance, throughput, STUN, and public signaling requirements.
 - Validated the throughput and normal-user flow changes with TypeScript checks, automated tests, build, CLI help/version/error smoke tests, and a compiled signaling server smoke test.
+- Committed and pushed the throughput and normal-user flow changes to `develop`.
 
 ## Pending Tasks
 
-- Commit and push the throughput and normal-user flow changes to `develop`.
 - Plan public signaling server hosting and TURN relay support so users on different networks do not need to exchange IP addresses.
 - Re-evaluate the next release version after the throughput work is validated.
 
@@ -82,8 +82,8 @@ Phase 14 - Throughput and normal-user transfer flow.
 
 ## Next Actions
 
-- Commit and push the latest throughput and flow changes.
 - Design the public signaling and TURN deployment path.
+- Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
 
 ## Decisions Already Made
 
