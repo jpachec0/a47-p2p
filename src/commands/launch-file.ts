@@ -32,6 +32,11 @@ export async function runLaunchFileFlow(args: string[]): Promise<boolean> {
   console.log(`File: ${resolvedFilePath}`);
 
   const room = await input({ message: "Room code" });
-  await runSendCommand(resolvedFilePath, { room: normalizeRoomCode(room) });
+  try {
+    await runSendCommand(resolvedFilePath, { room: normalizeRoomCode(room) });
+  } finally {
+    await input({ message: "Press Enter to exit" });
+  }
+
   return true;
 }

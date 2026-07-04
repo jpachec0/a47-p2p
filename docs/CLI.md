@@ -38,7 +38,7 @@ The receive flow immediately generates a room code and waits for a sender throug
 
 ## File Launch Flow
 
-When the executable is opened with a file path, such as by dragging a file onto `a47.exe`, A47 starts the send flow for that file and prompts only for the room code.
+When the executable is opened with a file path, such as by dragging a file onto `a47.exe`, A47 starts the send flow for that file and prompts only for the room code. After the send flow finishes, the window waits for Enter so users can read the final status.
 
 Examples:
 

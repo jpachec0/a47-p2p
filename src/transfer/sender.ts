@@ -21,6 +21,7 @@ interface SendFileOptions {
 
 const MAX_BUFFERED_AMOUNT_BYTES = 32 * 1024 * 1024;
 const TRANSFER_CONTROL_TIMEOUT_MS = 120_000;
+const POST_SUCCESS_GRACE_MS = 2_000;
 
 export async function sendFile(options: SendFileOptions): Promise<void> {
   const chunkSizeBytes = options.chunkSizeBytes ?? DEFAULT_CHUNK_SIZE_BYTES;
@@ -64,11 +65,18 @@ export async function sendFile(options: SendFileOptions): Promise<void> {
   if (hashResult.type === "hash-result" && hashResult.ok) {
     options.peer.send(encodeTransferMessage({ type: "sender-complete" }));
     await waitForBufferedAmountLow(options.peer.getDataChannel(), 0);
+    await waitForPostSuccessGracePeriod();
     console.log("Transfer completed and SHA-256 hash verified.");
     return;
   }
 
   throw new Error("Transfer completed, but SHA-256 verification failed.");
+}
+
+async function waitForPostSuccessGracePeriod(): Promise<void> {
+  await new Promise<void>((resolve) => {
+    setTimeout(resolve, POST_SUCCESS_GRACE_MS);
+  });
 }
 
 function waitForTransferMessage<TType extends TransferControlMessage["type"]>(

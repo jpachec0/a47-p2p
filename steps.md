@@ -140,6 +140,9 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Tagged and published `v0.1.6`.
 - Verified that the GitHub Actions release workflow completed successfully for `v0.1.6`.
 - Verified that all expected `v0.1.6` release assets are attached to the GitHub Release.
+- Added a sender-side post-success grace period before closing the peer so packaged executables do not tear down the connection immediately after `sender-complete`.
+- Updated the file launch flow to wait for Enter before closing, so Windows drag-and-drop users can read the final status or error.
+- Updated CLI and transfer protocol documentation for packaged executable shutdown behavior.
 
 ## Pending Tasks
 
@@ -147,6 +150,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Validate distributed discovery between two real machines on different residential networks.
 - Run a real large-file benchmark with the default distributed discovery flow.
 - Improve user-facing troubleshooting for DHT discovery timeouts after real-world testing.
+- Publish a patch release for packaged executable shutdown behavior.
 
 ## Known Issues
 
@@ -161,6 +165,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Test `v0.1.6` on two real machines with the normal receive/send room flow.
 - Benchmark a larger file through the `v0.1.6` distributed discovery flow.
 - Validate the receiver readiness, receiver finalization, and ordered shutdown fixes with the packaged CLI on two machines.
+- Confirm the packaged Windows sender remains open long enough to show the final transfer status.
 
 ## Decisions Already Made
 
@@ -198,6 +203,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Receiver commands may omit `--room`; A47 generates a room code in the `A47-XXXXXX` format.
 - Typed room codes are normalized to uppercase.
 - Opening the CLI with a file path starts the send flow for that file.
+- File launch mode waits for Enter before closing after the send flow finishes.
 - The default chunk size is 256 KiB.
 - Public STUN servers are enabled by default, but TURN relay support is still needed for reliable cross-network connectivity.
 - ICE server URLs are configurable through the `ice-servers` config key.
@@ -219,6 +225,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - `docs/SIGNALING.md`
 - `docs/WEBRTC.md`
 - `docs/TRANSFER_PROTOCOL.md`
+- `docs/CLI.md`
 - `package.json`
 - `package-lock.json`
 - `src/commands/help.ts`

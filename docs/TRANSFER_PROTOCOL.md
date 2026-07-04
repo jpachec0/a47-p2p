@@ -50,7 +50,7 @@ After the DataChannel opens, the receiver registers its message handler and send
 
 After file metadata arrives, the CLI receiver prompts the user to accept or reject the incoming file before any file bytes are written. The sender waits for `receiver-accepted` before sending chunks.
 
-Sender-side waits for receiver control messages use a readable timeout instead of hanging indefinitely. Receiver-side finalization also has a short fallback timeout after successful hash verification so a missing final acknowledgement does not leave a verified file stuck in progress.
+Sender-side waits for receiver control messages use a readable timeout instead of hanging indefinitely. After a successful `hash-result`, the sender sends `sender-complete`, waits briefly before closing the peer, and then exits. Receiver-side finalization also has a short fallback timeout after successful hash verification so a missing final acknowledgement does not leave a verified file stuck in progress.
 
 ## Interrupted Transfers
 
