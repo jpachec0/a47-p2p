@@ -62,6 +62,8 @@ export async function sendFile(options: SendFileOptions): Promise<void> {
 
   const hashResult = await waitForTransferMessage(options.peer, "hash-result");
   if (hashResult.type === "hash-result" && hashResult.ok) {
+    options.peer.send(encodeTransferMessage({ type: "sender-complete" }));
+    await waitForBufferedAmountLow(options.peer.getDataChannel(), 0);
     console.log("Transfer completed and SHA-256 hash verified.");
     return;
   }

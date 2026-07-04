@@ -18,6 +18,7 @@ The transfer protocol runs over a WebRTC DataChannel.
 - `file-complete`
 - `file-error`
 - `hash-result`
+- `sender-complete`
 
 ## Metadata
 
@@ -41,7 +42,7 @@ The sender calculates a SHA-256 hash before transfer. The receiver calculates a 
 
 If the hash does not match, the receiver removes the failed output file and reports a readable error.
 
-When `file-complete` arrives, the receiver first checks that the received byte count matches the advertised file size. It then enters a finalizing state while the write stream flushes and the SHA-256 result is sent back to the sender. A DataChannel close during this finalization window is not treated as an interrupted transfer after all bytes have already arrived.
+When `file-complete` arrives, the receiver first checks that the received byte count matches the advertised file size. It then enters a finalizing state while the write stream flushes and the SHA-256 result is sent back to the sender. The sender answers a successful `hash-result` with `sender-complete`, which gives both sides an ordered shutdown handshake. A DataChannel close during this finalization window is not treated as an interrupted transfer after all bytes have already arrived.
 
 ## Receiver Acceptance
 
@@ -49,7 +50,7 @@ After the DataChannel opens, the receiver registers its message handler and send
 
 After file metadata arrives, the CLI receiver prompts the user to accept or reject the incoming file before any file bytes are written. The sender waits for `receiver-accepted` before sending chunks.
 
-Sender-side waits for receiver control messages use a readable timeout instead of hanging indefinitely.
+Sender-side waits for receiver control messages use a readable timeout instead of hanging indefinitely. Receiver-side finalization also has a short fallback timeout after successful hash verification so a missing final acknowledgement does not leave a verified file stuck in progress.
 
 ## Interrupted Transfers
 

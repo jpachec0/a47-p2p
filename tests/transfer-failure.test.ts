@@ -93,6 +93,35 @@ describe("transfer failure handling", () => {
     await expect(readFile(outputPath, "utf8")).resolves.toBe("complete file");
   });
 
+  it("resolves a verified receive after the sender confirms completion", async () => {
+    const outputDirectory = await mkdtemp(path.join(os.tmpdir(), "a47-ack-transfer-"));
+    const peer = new FakePeer();
+    const fileContent = Buffer.from("acknowledged file");
+    const receivePromise = receiveFile({ outputDirectory, peer });
+    await peer.waitForDataHandler();
+
+    peer.emit(
+      encodeTransferMessage({
+        type: "file-meta",
+        protocolVersion: TRANSFER_PROTOCOL_VERSION,
+        fileName: "acknowledged.txt",
+        fileSize: fileContent.length,
+        sha256: createHash("sha256").update(fileContent).digest("hex")
+      })
+    );
+    await peer.waitForSentMessage((message) => message.includes('"type":"receiver-accepted"'));
+
+    peer.emit(fileContent);
+    await waitForAsyncReceiverWork();
+    peer.emit(encodeTransferMessage({ type: "file-complete" }));
+    await peer.waitForSentMessage((message) => message.includes('"type":"hash-result"'));
+    peer.emit(encodeTransferMessage({ type: "sender-complete" }));
+
+    const outputPath = await receivePromise;
+
+    await expect(readFile(outputPath, "utf8")).resolves.toBe("acknowledged file");
+  });
+
   it("rejects an interrupted send while waiting for the receiver", async () => {
     const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "a47-interrupted-send-"));
     const filePath = path.join(temporaryDirectory, "send.txt");

@@ -14,6 +14,7 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 8. Wait for the DataChannel to open.
 9. Wait for the receiver's `receiver-ready` protocol message.
 10. Send file transfer protocol messages.
+11. Send `sender-complete` after a successful `hash-result`.
 
 ## Receiver Flow
 
@@ -27,7 +28,8 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 8. Register the transfer message handler.
 9. Send `receiver-ready`.
 10. Receive file transfer protocol messages.
-11. Ignore late DataChannel close events after all advertised bytes arrived and hash finalization has started.
+11. Send `hash-result` after all advertised bytes arrive and SHA-256 verification completes.
+12. Resolve after `sender-complete`, a finalization fallback timeout, or a late close after successful verification.
 
 The transfer layer should use a small wrapper API instead of depending directly on `werift` internals.
 

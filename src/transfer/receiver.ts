@@ -18,6 +18,8 @@ interface ReceiveFileOptions {
   peer: A47Peer;
 }
 
+const FINAL_ACK_TIMEOUT_MS = 10_000;
+
 export async function receiveFile(options: ReceiveFileOptions): Promise<string> {
   await mkdir(options.outputDirectory, { recursive: true });
   await options.peer.waitUntilOpen();
@@ -30,6 +32,8 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
     let receivedBytes = 0;
     let isSettled = false;
     let isFinalizing = false;
+    let verifiedOutputPath: string | undefined;
+    let finalAckTimeout: NodeJS.Timeout | undefined;
     let progress: ProgressRenderer | undefined;
     const hash = createHash("sha256");
 
@@ -39,6 +43,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
       }
 
       isSettled = true;
+      clearFinalAckTimeout();
       writeStream?.destroy();
 
       if (outputPath) {
@@ -48,7 +53,30 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
       reject(error);
     };
 
+    const resolveTransfer = (completedOutputPath: string): void => {
+      if (isSettled) {
+        return;
+      }
+
+      isSettled = true;
+      clearFinalAckTimeout();
+      console.log("Transfer completed and SHA-256 hash verified.");
+      resolve(completedOutputPath);
+    };
+
+    const clearFinalAckTimeout = (): void => {
+      if (finalAckTimeout) {
+        clearTimeout(finalAckTimeout);
+        finalAckTimeout = undefined;
+      }
+    };
+
     options.peer.onClose(() => {
+      if (!isSettled && isFinalizing && verifiedOutputPath) {
+        resolveTransfer(verifiedOutputPath);
+        return;
+      }
+
       if (!isSettled && !isFinalizing) {
         void rejectTransfer(new Error("Transfer interrupted because the peer disconnected."));
       }
@@ -98,7 +126,10 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
                 progress?.finish(receivedBytes);
 
                 if (ok) {
-                  isSettled = true;
+                  verifiedOutputPath = completedOutputPath;
+                  finalAckTimeout = setTimeout(() => {
+                    resolveTransfer(completedOutputPath);
+                  }, FINAL_ACK_TIMEOUT_MS);
                 }
 
                 options.peer.send(
@@ -115,9 +146,14 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
                   return;
                 }
 
-                console.log("Transfer completed and SHA-256 hash verified.");
-                resolve(completedOutputPath);
+                return;
               });
+            }
+
+            if (message.type === "sender-complete") {
+              if (verifiedOutputPath) {
+                resolveTransfer(verifiedOutputPath);
+              }
             }
 
             if (message.type === "file-error") {

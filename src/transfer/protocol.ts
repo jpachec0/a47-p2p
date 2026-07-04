@@ -6,7 +6,8 @@ export type TransferMessageType =
   | "receiver-accepted"
   | "file-complete"
   | "file-error"
-  | "hash-result";
+  | "hash-result"
+  | "sender-complete";
 
 export interface FileMetaMessage {
   type: "file-meta";
@@ -40,13 +41,18 @@ export interface HashResultMessage {
   actualSha256: string;
 }
 
+export interface SenderCompleteMessage {
+  type: "sender-complete";
+}
+
 export type TransferControlMessage =
   | FileMetaMessage
   | ReceiverReadyMessage
   | ReceiverAcceptedMessage
   | FileCompleteMessage
   | FileErrorMessage
-  | HashResultMessage;
+  | HashResultMessage
+  | SenderCompleteMessage;
 
 export function encodeTransferMessage(message: TransferControlMessage): string {
   return JSON.stringify(message);
