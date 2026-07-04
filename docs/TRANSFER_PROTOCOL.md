@@ -41,6 +41,8 @@ The sender calculates a SHA-256 hash before transfer. The receiver calculates a 
 
 If the hash does not match, the receiver removes the failed output file and reports a readable error.
 
+When `file-complete` arrives, the receiver first checks that the received byte count matches the advertised file size. It then enters a finalizing state while the write stream flushes and the SHA-256 result is sent back to the sender. A DataChannel close during this finalization window is not treated as an interrupted transfer after all bytes have already arrived.
+
 ## Receiver Acceptance
 
 After the DataChannel opens, the receiver registers its message handler and sends `receiver-ready`. The sender waits for this message before sending `file-meta`. This prevents a race where file metadata could arrive before the receiver was listening.

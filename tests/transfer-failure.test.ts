@@ -1,4 +1,5 @@
-import { mkdtemp, readdir, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -61,6 +62,35 @@ describe("transfer failure handling", () => {
 
     await expect(receivePromise).rejects.toThrow("Transfer interrupted because the peer disconnected.");
     await expect(readdir(outputDirectory)).resolves.toEqual([]);
+  });
+
+  it("keeps a verified file when the peer closes during final receiver cleanup", async () => {
+    const outputDirectory = await mkdtemp(path.join(os.tmpdir(), "a47-finalizing-transfer-"));
+    const peer = new FakePeer();
+    const fileContent = Buffer.from("complete file");
+    const receivePromise = receiveFile({ outputDirectory, peer });
+    await peer.waitForDataHandler();
+
+    peer.emit(
+      encodeTransferMessage({
+        type: "file-meta",
+        protocolVersion: TRANSFER_PROTOCOL_VERSION,
+        fileName: "complete.txt",
+        fileSize: fileContent.length,
+        sha256: createHash("sha256").update(fileContent).digest("hex")
+      })
+    );
+    await peer.waitForSentMessage((message) => message.includes('"type":"receiver-accepted"'));
+
+    peer.emit(fileContent);
+    await waitForAsyncReceiverWork();
+    peer.emit(encodeTransferMessage({ type: "file-complete" }));
+    await peer.waitForSentMessage((message) => message.includes('"type":"hash-result"'));
+    peer.emitClose();
+
+    const outputPath = await receivePromise;
+
+    await expect(readFile(outputPath, "utf8")).resolves.toBe("complete file");
   });
 
   it("rejects an interrupted send while waiting for the receiver", async () => {

@@ -27,6 +27,7 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 8. Register the transfer message handler.
 9. Send `receiver-ready`.
 10. Receive file transfer protocol messages.
+11. Ignore late DataChannel close events after all advertised bytes arrived and hash finalization has started.
 
 The transfer layer should use a small wrapper API instead of depending directly on `werift` internals.
 

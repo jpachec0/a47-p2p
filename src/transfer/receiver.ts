@@ -29,6 +29,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
     let writeStream: WriteStream | undefined;
     let receivedBytes = 0;
     let isSettled = false;
+    let isFinalizing = false;
     let progress: ProgressRenderer | undefined;
     const hash = createHash("sha256");
 
@@ -48,7 +49,7 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
     };
 
     options.peer.onClose(() => {
-      if (!isSettled) {
+      if (!isSettled && !isFinalizing) {
         void rejectTransfer(new Error("Transfer interrupted because the peer disconnected."));
       }
     });
@@ -83,11 +84,23 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
                 throw new Error("Transfer completed before file metadata was received.");
               }
 
+              if (receivedBytes !== metadata.fileSize) {
+                throw new Error("Transfer completed before all file bytes were received.");
+              }
+
               const completedOutputPath = outputPath;
+              isFinalizing = true;
 
               writeStream.end(async () => {
                 const actualSha256 = hash.digest("hex");
                 const ok = actualSha256 === metadata?.sha256;
+
+                progress?.finish(receivedBytes);
+
+                if (ok) {
+                  isSettled = true;
+                }
+
                 options.peer.send(
                   encodeTransferMessage({
                     type: "hash-result",
@@ -97,14 +110,11 @@ export async function receiveFile(options: ReceiveFileOptions): Promise<string> 
                   })
                 );
 
-                progress?.finish(receivedBytes);
-
                 if (!ok) {
                   await rejectTransfer(new Error("SHA-256 verification failed. The received file was removed."));
                   return;
                 }
 
-                isSettled = true;
                 console.log("Transfer completed and SHA-256 hash verified.");
                 resolve(completedOutputPath);
               });
