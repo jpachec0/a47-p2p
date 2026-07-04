@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 14 - Zero-server manual signaling and normal-user transfer flow.
+Phase 14 - Distributed room discovery and normal-user transfer flow.
 
 ## Completed Tasks
 
@@ -94,24 +94,37 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 - Tagged and published `v0.1.2`.
 - Verified that the GitHub Actions release workflow completed successfully for `v0.1.2`.
 - Verified that all expected `v0.1.2` release assets are attached to the GitHub Release.
+- Added `hyperswarm` distributed discovery for room-code peer lookup without A47-hosted infrastructure.
+- Added a DHT-backed distributed signaling layer that exchanges only WebRTC offer and answer metadata.
+- Made distributed room discovery the default for `a47 receive` and `a47 send <path> --room <room>` when `--server` is not used.
+- Kept WebSocket signaling available as an explicit advanced/self-hosted mode through `--server`.
+- Kept manual offer/answer signaling available as the zero-discovery fallback through `--manual`.
+- Simplified the file launch and interactive send flows so normal users enter only the room code, not a signaling server URL.
+- Simplified the interactive receive flow so choosing Receive file immediately generates a room code and waits for the sender.
+- Added deterministic tests for distributed discovery topic generation and JSON-line metadata parsing.
+- Bumped the package version to `0.1.3` for the distributed discovery release candidate.
+- Updated README and documentation for distributed discovery, the no-IP normal-user flow, optional WebSocket signaling, and remaining NAT/TURN limitations.
+- Validated TypeScript checks, automated tests, build, compiled CLI smoke tests, Windows/Linux/macOS binary packaging, and a short Linux binary distributed receive startup smoke test.
 
 ## Pending Tasks
 
-- Run a real large-file LAN benchmark with the new 256 KiB chunk and 32 MiB DataChannel buffer settings.
-- Plan LAN discovery and distributed discovery so users can avoid copy-paste codes without requiring official public infrastructure.
+- Validate distributed discovery between two real machines on the same LAN.
+- Validate distributed discovery between two real machines on different residential networks.
+- Run a real large-file benchmark with the default distributed discovery flow.
+- Publish `v0.1.3` after release packaging and smoke validation pass.
 
 ## Known Issues
 
 - `npm audit --omit=dev` reports 3 high-severity vulnerabilities from `ip` through `werift`/`werift-ice`; npm reports no fix available.
-- Manual signaling is available for zero-server setup, but it requires copy-paste offer and answer codes.
+- Distributed discovery depends on public DHT reachability from both users' networks.
+- Manual signaling is still available as a fallback, but it requires copy-paste offer and answer codes.
 - Some restrictive NAT/firewall combinations require TURN relay support; STUN alone is not guaranteed.
-- Fully automatic cross-network discovery without manual codes still needs LAN discovery, distributed discovery, or user-provided signaling.
+- Binary packaging may need additional validation because `hyperswarm` brings native networking dependencies.
 
 ## Next Actions
 
-- Run a real large-file LAN benchmark with the released `v0.1.1` binaries.
-- Run a real manual signaling transfer with the released `v0.1.2` binaries on two machines.
-- Design LAN discovery and distributed discovery.
+- Commit and push the distributed discovery implementation to `develop`.
+- Tag and publish `v0.1.3` if packaging validation passes.
 
 ## Decisions Already Made
 
@@ -140,6 +153,7 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 - Installed users can run the signaling server with `a47 signaling --port 4747`.
 - LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
 - Users can avoid the signaling server entirely with `a47 receive --manual` and `a47 send <path> --manual`.
+- Default `a47 receive` and `a47 send <path> --room <room>` use distributed room discovery unless `--server` or `--manual` is provided.
 - Receiver commands may omit `--room`; A47 generates a room code in the `A47-XXXXXX` format.
 - Typed room codes are normalized to uppercase.
 - Opening the CLI with a file path starts the send flow for that file.
@@ -149,9 +163,27 @@ Phase 14 - Zero-server manual signaling and normal-user transfer flow.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 - Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
 - The latest release version is `v0.1.2`.
+- The current development version is `0.1.3`.
 
 ## Files Changed in the Latest Step
 
 - `steps.md`
 - `README.md`
+- `docs/ARCHITECTURE.md`
+- `docs/CLI.md`
+- `docs/DEPLOYMENT.md`
+- `docs/DEVELOPMENT.md`
 - `docs/ROADMAP.md`
+- `docs/SECURITY.md`
+- `docs/SIGNALING.md`
+- `docs/WEBRTC.md`
+- `package.json`
+- `package-lock.json`
+- `src/commands/help.ts`
+- `src/commands/interactive.ts`
+- `src/commands/launch-file.ts`
+- `src/commands/receive.ts`
+- `src/commands/send.ts`
+- `src/discovery/distributed-signaling.ts`
+- `src/types/hyperswarm.d.ts`
+- `tests/distributed-signaling.test.ts`

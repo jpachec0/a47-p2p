@@ -4,19 +4,19 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 
 ## Sender Flow
 
-1. Connect to the signaling server.
+1. Find the receiver through distributed discovery or connect to an explicit signaling server.
 2. Join a room.
 3. Create a peer connection.
 4. Create a DataChannel.
 5. Create an offer.
-6. Send the offer through signaling.
-7. Receive the answer through signaling.
+6. Send the offer through distributed discovery or signaling.
+7. Receive the answer through distributed discovery or signaling.
 8. Wait for the DataChannel to open.
 9. Send file transfer protocol messages.
 
 ## Receiver Flow
 
-1. Connect to the signaling server.
+1. Start distributed discovery or connect to an explicit signaling server.
 2. Join a room.
 3. Create a peer connection.
 4. Receive an offer through signaling.
@@ -26,6 +26,21 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 8. Receive file transfer protocol messages.
 
 The transfer layer should use a small wrapper API instead of depending directly on `werift` internals.
+
+## Distributed Discovery Flow
+
+Distributed discovery automates the offer and answer exchange while keeping files out of any server or proxy.
+
+1. The receiver runs `a47 receive`.
+2. A47 generates a room code such as `A47-SK2S29`.
+3. A47 derives a DHT topic from the normalized room code.
+4. The sender runs `a47 send <path> --room A47-SK2S29` or drags a file onto the executable and enters the room code.
+5. Receiver and sender connect through `hyperswarm` and exchange WebRTC offer and answer metadata.
+6. A47 closes discovery after negotiation metadata is exchanged.
+7. Peers establish the DataChannel directly when ICE connectivity succeeds.
+8. File transfer uses the same chunked transfer protocol as every other signaling mode.
+
+Distributed discovery removes IP entry and avoids A47-hosted public signaling infrastructure. It still depends on DHT reachability and WebRTC ICE connectivity.
 
 ## Manual Signaling Flow
 
@@ -64,6 +79,8 @@ The current wrapper exposes:
 ```ts
 createSenderPeer(options)
 createReceiverPeer(options)
+createDistributedSenderPeer(room, iceServers)
+createDistributedReceiverPeer(room, iceServers)
 createManualReceiverOffer(options)
 createManualSenderAnswer(options)
 peer.onData(callback)

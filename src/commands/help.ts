@@ -7,8 +7,10 @@ Usage:
   a47
   a47 help
   a47 version
-  a47 send <path> --room <room> [--server <url>]
-  a47 receive [--room <room>] [--output <dir>] [--server <url>]
+  a47 send <path> --room <room>
+  a47 receive [--output <dir>]
+  a47 send <path> --room <room> --server <url>
+  a47 receive [--room <room>] [--output <dir>] --server <url>
   a47 send <path> --manual
   a47 receive --manual
   a47 <file-path>
@@ -24,14 +26,20 @@ Direct commands:
   a47 version
       Show the current package version.
 
-  a47 send <path> --room <room> --server ws://localhost:4747
-      Send one file to a peer in the same room.
+  a47 send <path> --room <room>
+      Send one file to a receiver waiting in the same room.
 
-  a47 receive --room <room> --output ./downloads --server ws://localhost:4747
-      Receive one file from a peer in the same room.
+  a47 receive --output ./downloads
+      Generate a room code automatically and receive one file.
 
   a47 receive
       Generate a room code automatically and wait for a sender.
+
+  a47 send <path> --room <room> --server ws://localhost:4747
+      Advanced: use a self-hosted WebSocket signaling server instead of distributed discovery.
+
+  a47 receive --room <room> --server ws://localhost:4747
+      Advanced: receive through a self-hosted WebSocket signaling server.
 
   a47 receive --manual
       Generate an offer code for copy-paste signaling without any signaling server.
@@ -57,13 +65,14 @@ Direct commands:
 Interactive mode:
   Run a47 without arguments to open a simple terminal menu.
   The receive flow generates a room code automatically.
+  The send flow asks for a file path and the room code shown by the receiver.
 
-Signaling server:
-  The signaling server is only used to exchange connection metadata for peer discovery
-  and WebRTC negotiation. Files do not pass through the signaling server.
-  Run a47 signaling before using local ws://localhost:4747 transfers.
-  For different computers, run the server on one machine and use ws://<server-ip>:4747.
-  Use --manual to avoid the signaling server entirely and exchange codes by copy-paste.
+Discovery and signaling:
+  By default, A47 uses distributed peer discovery to find the receiver by room code.
+  Discovery only exchanges WebRTC connection metadata. Files do not pass through
+  discovery peers, the WebSocket signaling server, or any A47 proxy.
+  Use --server for an advanced self-hosted WebSocket signaling server.
+  Use --manual to avoid network discovery and exchange codes by copy-paste.
 
 Configuration:
   Supported keys: server, chunk-size, ice-servers.

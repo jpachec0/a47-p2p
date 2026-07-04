@@ -1,6 +1,6 @@
 {
   "name": "a47-p2p",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A command-line peer-to-peer file transfer tool using WebRTC DataChannels.",
   "type": "module",
   "license": "MIT",
@@ -45,6 +45,7 @@
   "dependencies": {
     "@inquirer/prompts": "^8.5.2",
     "commander": "^15.0.0",
+    "hyperswarm": "^4.17.0",
     "werift": "^0.23.0",
     "ws": "^8.21.0"
   },

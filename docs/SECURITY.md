@@ -1,10 +1,11 @@
 # Security
 
-A47 is designed so transferred files do not pass through the signaling server.
+A47 is designed so transferred files do not pass through distributed discovery peers or the signaling server.
 
 ## Current Protections
 
 - WebRTC DataChannels use encrypted transport.
+- Default distributed discovery exchanges only WebRTC connection metadata.
 - The signaling server only relays metadata needed for peer negotiation.
 - The signaling server rejects weak or unsafe room codes.
 - SHA-256 hashes verify file integrity after transfer.
@@ -14,6 +15,8 @@ A47 is designed so transferred files do not pass through the signaling server.
 ## Current Limitations
 
 - The MVP signaling server has no authentication.
+- Distributed discovery room codes are convenience join secrets, not full authentication.
+- Public DHT discovery depends on external network availability.
 - Room names should be treated as shared secrets only for convenience, not strong security.
 - Additional application-level encryption is not implemented yet.
 - Public TURN relay usage needs a short-lived credential distribution service before it is user-ready.

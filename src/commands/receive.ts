@@ -1,6 +1,7 @@
 import { confirm, input } from "@inquirer/prompts";
 
 import { DEFAULT_OUTPUT_DIRECTORY, loadConfig } from "../config/config.js";
+import { createDistributedReceiverPeer } from "../discovery/distributed-signaling.js";
 import { SignalingClient } from "../signaling/client.js";
 import { generateRoomCode, normalizeRoomCode } from "../signaling/rooms.js";
 import type { FileMetaMessage } from "../transfer/protocol.js";
@@ -24,6 +25,25 @@ export async function runReceiveCommand(options: ReceiveCommandOptions): Promise
 
   if (options.manual) {
     await runManualReceive(outputDirectory, config);
+    return;
+  }
+
+  if (!options.server?.trim()) {
+    console.log(`Room code: ${room}`);
+    console.log("Waiting for sender through distributed discovery...");
+    const peer = await createDistributedReceiverPeer(room, config.iceServers);
+
+    try {
+      const outputPath = await receiveFile({
+        acceptFile: promptTransferAcceptance,
+        outputDirectory,
+        peer
+      });
+      console.log(`Saved file: ${outputPath}`);
+    } finally {
+      await peer.close();
+    }
+
     return;
   }
 

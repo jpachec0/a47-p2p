@@ -6,6 +6,7 @@ A47 P2P is a Node.js command-line application for direct peer-to-peer file trans
 
 - CLI: parses direct commands and starts the interactive terminal interface.
 - Interactive UI: provides a terminal-only menu for common actions.
+- Distributed discovery: finds peers by room code through a DHT-backed swarm and exchanges only WebRTC offer and answer metadata.
 - Manual signaling: exchanges WebRTC offer and answer metadata through copy-paste codes.
 - Signaling client: connects to an optional WebSocket signaling server and exchanges session metadata.
 - Signaling server: optionally relays room and WebRTC negotiation messages between two peers and can be started with `a47 signaling`.
@@ -17,6 +18,7 @@ A47 P2P is a Node.js command-line application for direct peer-to-peer file trans
 
 - `src/cli.ts` defines the `a47` command and direct subcommands.
 - `src/commands/interactive.ts` provides the terminal-only menu.
+- `src/discovery/distributed-signaling.ts` implements default room-code discovery without an A47-hosted signaling server.
 - `src/webrtc/manual-signaling.ts` implements zero-server copy-paste signaling.
 - `src/signaling/server.ts` runs the optional WebSocket signaling server for development scripts and the installed `a47 signaling` command.
 - `src/webrtc/peer.ts` wraps `werift` peer connection and DataChannel behavior.
@@ -24,12 +26,12 @@ A47 P2P is a Node.js command-line application for direct peer-to-peer file trans
 
 ## Data Flow
 
-1. The receiver starts either manual signaling or WebSocket signaling.
-2. Manual signaling exchanges offer and answer codes by copy-paste, while WebSocket signaling relays WebRTC offer, answer, and ICE candidate messages.
+1. The receiver starts distributed discovery, manual signaling, or optional WebSocket signaling.
+2. Distributed discovery uses the room code to find a peer and exchange WebRTC offer and answer metadata. Manual signaling exchanges the same metadata by copy-paste. WebSocket signaling relays WebRTC offer, answer, and ICE candidate messages through a self-hosted server.
 3. Peers establish a WebRTC DataChannel.
 4. File metadata is sent directly through the DataChannel.
 5. The receiver accepts or rejects the incoming file.
 6. File chunks are sent directly through the DataChannel.
 7. The receiver verifies the final SHA-256 hash.
 
-The signaling server is only used to exchange connection metadata. Files are transferred through WebRTC DataChannels and are not uploaded to the signaling server.
+Distributed discovery and the optional signaling server are only used to exchange connection metadata. Files are transferred through WebRTC DataChannels and are not uploaded to discovery peers or the signaling server.

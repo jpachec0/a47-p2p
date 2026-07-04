@@ -7,16 +7,15 @@ The CLI command is `a47`.
 ```bash
 a47 help
 a47 version
+a47 receive
+a47 send ./file.zip --room my-room
+a47 ./file.zip
+a47 receive --manual
+a47 send ./file.zip --manual
 a47 signaling --port 4747
 a47 signaling --host 0.0.0.0 --port 4747
-a47 receive
-a47 receive --manual
-a47 send ./file.zip --room my-room
-a47 send ./file.zip --manual
-a47 receive --room my-room
-a47 ./file.zip
 a47 send ./file.zip --room my-room --server ws://localhost:4747
-a47 receive --room my-room --output ./downloads
+a47 receive --room my-room --output ./downloads --server ws://localhost:4747
 a47 config get server
 a47 config set server ws://localhost:4747
 a47 config get ice-servers
@@ -35,11 +34,11 @@ Running `a47` without arguments opens a terminal-only interactive menu. The inte
 - Settings/configuration
 - Exit
 
-The receive flow generates a room code automatically and waits for a sender. The send flow asks for a file path and room code.
+The receive flow immediately generates a room code and waits for a sender through distributed discovery, saving to the current directory by default. The send flow asks for a file path and the room code shown by the receiver. It does not ask normal users for IP addresses or signaling server URLs.
 
 ## File Launch Flow
 
-When the executable is opened with a file path, such as by dragging a file onto `a47.exe`, A47 starts the send flow for that file and prompts for the room code and signaling server URL.
+When the executable is opened with a file path, such as by dragging a file onto `a47.exe`, A47 starts the send flow for that file and prompts only for the room code.
 
 Examples:
 
@@ -51,9 +50,20 @@ a47 /file.zip
 
 If `/file.zip` does not exist as an absolute path, A47 also checks for `file.zip` relative to the current directory and the executable directory.
 
+## Distributed Discovery
+
+Default transfers use distributed room discovery:
+
+```bash
+a47 receive
+a47 send ./file.zip --room A47-SK2S29
+```
+
+The receiver prints the room code. The sender enters that code. A47 uses the room to find the receiver and exchange WebRTC metadata, then sends the file through the DataChannel. Files do not pass through discovery peers.
+
 ## Signaling Server
 
-The signaling server helps peers find each other and exchange WebRTC negotiation metadata. Files do not pass through the signaling server.
+The signaling server is optional. It helps peers find each other and exchange WebRTC negotiation metadata when users explicitly pass `--server`. Files do not pass through the signaling server.
 
 Installed users can run a local signaling server directly from the CLI:
 
@@ -78,7 +88,7 @@ Do not use `localhost` for both peers when they are on different computers. `loc
 
 Room codes must be 4 to 64 characters and may only contain letters, numbers, dots, underscores, and hyphens. Typed room codes are normalized to uppercase. Automatically generated room codes use the `A47-XXXXXX` format.
 
-If a command prints `Unable to connect to signaling server`, start `a47 signaling` first, confirm the URL points to the correct machine, and check whether a firewall is blocking the port.
+If a command prints `Unable to connect to signaling server`, start `a47 signaling` first, confirm the URL points to the correct machine, and check whether a firewall is blocking the port. This applies to `--server` mode only.
 
 ## Manual Signaling
 
@@ -100,7 +110,8 @@ Manual signaling is useful when users want no signaling server at all. It still 
 
 ## Defaults
 
-- Default signaling server: `ws://localhost:4747`
+- Default discovery mode: distributed room discovery
+- Default signaling server for `--server` mode: `ws://localhost:4747`
 - Default output directory: current working directory
 - Default chunk size: 256 KiB
 - Default ICE servers: `stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302`

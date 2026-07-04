@@ -64,6 +64,7 @@ The `v0.1.1` release exposes the signaling server through the installed `a47 sig
 
 The current development focus is higher transfer throughput and a normal-user flow:
 
+- Distributed room discovery as the default no-IP, no-A47-server setup.
 - Manual signaling for zero-server P2P setup.
 - Receiver-generated room codes.
 - File launch and drag-and-drop send flow for packaged executables.
@@ -72,7 +73,7 @@ The current development focus is higher transfer throughput and a normal-user fl
 - Configurable ICE servers for STUN/TURN URL rollout.
 - Authenticated TURN entries in local config.
 - Docker-based public signaling deployment notes.
-- Optional discovery improvements so users do not need to exchange IP addresses.
+- Optional self-hosted signaling remains available for controlled environments.
 
 ## Release Status
 
@@ -87,4 +88,4 @@ The `v0.1.1` release includes:
 - Public signaling Docker deployment notes.
 - TURN credential distribution plan.
 
-The `v0.1.2` release includes manual signaling so A47 can connect peers without any signaling server. Future discovery work should focus on LAN discovery and distributed discovery rather than requiring official public infrastructure.
+The `v0.1.2` release includes manual signaling so A47 can connect peers without any signaling server. The current `develop` branch adds distributed room discovery so users can share a short room code without typing IP addresses, running a WebSocket server, or depending on official A47 infrastructure.

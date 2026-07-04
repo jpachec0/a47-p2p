@@ -1,6 +1,7 @@
 import { input } from "@inquirer/prompts";
 
 import { loadConfig } from "../config/config.js";
+import { createDistributedSenderPeer } from "../discovery/distributed-signaling.js";
 import { SignalingClient } from "../signaling/client.js";
 import { normalizeRoomCode } from "../signaling/rooms.js";
 import { sendFile } from "../transfer/sender.js";
@@ -11,6 +12,7 @@ import { createSenderPeer } from "../webrtc/peer.js";
 
 export interface SendCommandOptions {
   manual?: boolean;
+  manualOfferCode?: string;
   room?: string;
   server?: string;
 }
@@ -21,13 +23,27 @@ export async function runSendCommand(filePath: string, options: SendCommandOptio
   const serverUrl = options.server?.trim() || config.signalingServerUrl;
   const resolvedFilePath = await resolveExistingFile(filePath);
 
-  if (options.manual) {
-    await runManualSend(resolvedFilePath, config);
+  if (options.manual || options.manualOfferCode) {
+    await runManualSend(resolvedFilePath, config, options.manualOfferCode);
     return;
   }
 
   if (!room) {
     throw new A47Error("Missing required option: --room <room>.");
+  }
+
+  if (!options.server?.trim()) {
+    console.log(`Looking for receiver in room: ${room}`);
+    console.log("Using distributed discovery. Files are not sent through discovery peers.");
+    const peer = await createDistributedSenderPeer(room, config.iceServers);
+
+    try {
+      await sendFile({ filePath: resolvedFilePath, peer, chunkSizeBytes: config.chunkSizeBytes });
+    } finally {
+      await peer.close();
+    }
+
+    return;
   }
 
   const signalingClient = new SignalingClient(serverUrl);
@@ -46,9 +62,13 @@ export async function runSendCommand(filePath: string, options: SendCommandOptio
   }
 }
 
-async function runManualSend(resolvedFilePath: string, config: Awaited<ReturnType<typeof loadConfig>>): Promise<void> {
+async function runManualSend(
+  resolvedFilePath: string,
+  config: Awaited<ReturnType<typeof loadConfig>>,
+  providedOfferCode?: string
+): Promise<void> {
   console.log("Manual signaling mode does not use the WebSocket signaling server.");
-  const offerCode = await input({ message: "Paste receiver offer code" });
+  const offerCode = providedOfferCode?.trim() || (await input({ message: "Paste receiver offer code" }));
   const manualAnswer = await createManualSenderAnswer(offerCode, config.iceServers);
 
   console.log("");

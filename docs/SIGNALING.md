@@ -1,11 +1,32 @@
 # Signaling
 
-A47 supports two signaling modes:
+A47 supports three signaling modes:
 
+- Distributed discovery: the default room-code flow. It uses a DHT-backed swarm to find the receiver and exchange WebRTC offer and answer metadata.
 - Manual signaling: users copy and paste offer and answer codes. This uses no signaling server.
-- WebSocket signaling: a lightweight WebSocket relay handles peer discovery and WebRTC negotiation.
+- WebSocket signaling: an optional lightweight WebSocket relay handles peer discovery and WebRTC negotiation for self-hosted or development usage.
 
-The WebSocket signaling server is optional convenience infrastructure. It is not used by `a47 send --manual` or `a47 receive --manual`.
+The WebSocket signaling server is optional convenience infrastructure. It is not used by default `a47 send --room`, default `a47 receive`, or manual signaling.
+
+## Distributed Discovery
+
+Distributed discovery is the default normal-user flow.
+
+Receiver:
+
+```bash
+a47 receive
+```
+
+Sender:
+
+```bash
+a47 send ./example.txt --room A47-SK2S29
+```
+
+A47 derives a 32-byte discovery topic from the normalized room code. Peers use that topic to find each other through `hyperswarm`, then exchange only WebRTC offer and answer metadata. After that exchange, discovery is closed and file transfer uses the WebRTC DataChannel.
+
+Distributed discovery does not receive, store, inspect, or proxy files. It also does not require users to type an IP address or run an A47 public server. It depends on the public DHT and the users' networks allowing peer discovery traffic.
 
 ## Manual Signaling
 
@@ -22,7 +43,7 @@ Manual signaling does not receive, store, inspect, or proxy files. It also does 
 
 ## WebSocket Signaling
 
-The WebSocket signaling server is a lightweight relay for peer discovery and WebRTC negotiation.
+The WebSocket signaling server is a lightweight optional relay for peer discovery and WebRTC negotiation. It is selected only when users pass `--server <url>`.
 
 ## Responsibilities
 

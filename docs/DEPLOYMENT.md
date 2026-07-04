@@ -1,10 +1,10 @@
 # Deployment
 
-This document describes the deployment path for making A47 usable without manual IP exchange.
+This document describes optional deployment paths. A47's default user flow uses distributed discovery and does not require official A47 public infrastructure.
 
 ## Public Signaling Server
 
-Users on different networks need a public WebSocket signaling URL that both peers can reach.
+Users can optionally use a public or self-hosted WebSocket signaling URL that both peers can reach.
 
 The signaling server still only exchanges room and WebRTC negotiation metadata. It does not receive, store, inspect, or proxy files.
 
@@ -73,9 +73,10 @@ See [TURN_CREDENTIALS.md](TURN_CREDENTIALS.md) for the release credential distri
 
 ## Release-Ready Plan
 
-Before making public cross-network transfer the default, complete these tasks:
+Before recommending a managed public signaling service, complete these tasks:
 
-- Deploy a public `wss://` signaling server.
+- Validate the default distributed discovery flow across residential networks.
+- Deploy a public `wss://` signaling server only if a controlled fallback is needed.
 - Choose and deploy a TURN server or managed TURN provider.
 - Implement the short-lived TURN credential flow described in [TURN_CREDENTIALS.md](TURN_CREDENTIALS.md).
 - Validate transfers between two different residential networks.

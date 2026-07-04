@@ -1,6 +1,7 @@
 import { input } from "@inquirer/prompts";
 
-import { DEFAULT_OUTPUT_DIRECTORY, loadConfig } from "../config/config.js";
+import { loadConfig } from "../config/config.js";
+import { normalizeRoomCode } from "../signaling/rooms.js";
 import { clearScreen } from "../ui/clear.js";
 import { renderHeader } from "../ui/header.js";
 import { promptMainMenu } from "../ui/menu.js";
@@ -49,14 +50,9 @@ async function runSendFlow(): Promise<void> {
 
   const filePath = await input({ message: "File path" });
   const room = await input({ message: "Room code" });
-  const config = await loadConfig();
-  const server = await input({
-    message: "Signaling server URL",
-    default: config.signalingServerUrl
-  });
 
   await runWithPause(async () => {
-    await runSendCommand(filePath, { room, server });
+    await runSendCommand(filePath, { room: normalizeRoomCode(room) });
   });
 }
 
@@ -65,18 +61,8 @@ async function runReceiveFlow(): Promise<void> {
   renderHeader();
   renderSectionTitle("Receive file");
 
-  const output = await input({
-    message: "Output directory",
-    default: DEFAULT_OUTPUT_DIRECTORY
-  });
-  const config = await loadConfig();
-  const server = await input({
-    message: "Signaling server URL",
-    default: config.signalingServerUrl
-  });
-
   await runWithPause(async () => {
-    await runReceiveCommand({ output, server });
+    await runReceiveCommand({});
   });
 }
 
@@ -95,6 +81,8 @@ async function runSettingsFlow(): Promise<void> {
   console.log(`Default signaling server: ${config.signalingServerUrl}`);
   console.log(`Default chunk size: ${config.chunkSizeBytes} bytes`);
   console.log(`ICE servers: ${config.iceServers.map((iceServer) => iceServer.urls).join(",")}`);
+  console.log("");
+  console.log("Default transfers use distributed room discovery unless --server or --manual is used.");
   console.log("");
   console.log("Use a47 config get <key> or a47 config set <key> <value> to manage defaults.");
 

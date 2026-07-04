@@ -60,7 +60,7 @@ The test suite includes unit tests for config, path handling, error output, room
 
 Performance-sensitive transfer behavior is covered by code review and local smoke tests. When validating throughput, use large files, avoid measuring the initial SHA-256 preflight as network transfer time, and compare against the available WebRTC path. The application default is a 256 KiB chunk size with a larger DataChannel buffer window.
 
-For cross-network validation, use a public `wss://` signaling URL and a configured ICE server list. STUN may work for many home networks, but reliable validation across restrictive networks requires TURN credentials.
+For cross-network validation, first test the default distributed room discovery flow. If discovery fails, test the manual signaling fallback and the optional `--server` flow separately so discovery failures are not confused with WebRTC ICE failures. STUN may work for many home networks, but reliable validation across restrictive networks requires TURN credentials.
 
 Build the local signaling Docker image:
 
@@ -83,7 +83,23 @@ Use normal output in user-facing examples and debug output only for development 
 
 ## Local MVP Validation
 
-Manual signaling, no server:
+Default distributed discovery:
+
+Terminal 1:
+
+```bash
+node dist/cli.js receive --output ./downloads
+```
+
+Terminal 2:
+
+```bash
+node dist/cli.js send ./example.txt --room <generated-room>
+```
+
+This path uses public DHT discovery, so it is not part of the deterministic automated test suite.
+
+Manual signaling, no discovery service:
 
 Terminal 1:
 
@@ -162,8 +178,8 @@ npm run package:macos:arm64
 Create an official GitHub release by pushing a version tag:
 
 ```bash
-git tag v0.1.1
-git push origin v0.1.1
+git tag v0.1.3
+git push origin v0.1.3
 ```
 
 Linux/macOS uninstall:
