@@ -12,7 +12,8 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 6. Send the offer through distributed discovery or signaling.
 7. Receive the answer through distributed discovery or signaling.
 8. Wait for the DataChannel to open.
-9. Send file transfer protocol messages.
+9. Wait for the receiver's `receiver-ready` protocol message.
+10. Send file transfer protocol messages.
 
 ## Receiver Flow
 
@@ -23,7 +24,9 @@ A47 uses `werift` to create WebRTC peer connections from Node.js.
 5. Set the remote offer.
 6. Create and send an answer.
 7. Wait for the sender DataChannel.
-8. Receive file transfer protocol messages.
+8. Register the transfer message handler.
+9. Send `receiver-ready`.
+10. Receive file transfer protocol messages.
 
 The transfer layer should use a small wrapper API instead of depending directly on `werift` internals.
 

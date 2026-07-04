@@ -109,6 +109,13 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Tagged and published `v0.1.3`.
 - Verified that the GitHub Actions release workflow completed successfully for `v0.1.3`.
 - Verified that all expected `v0.1.3` release assets are attached to the GitHub Release.
+- Fixed a transfer-start race where the sender could send file metadata before the receiver registered its DataChannel message handler.
+- Updated the sender to wait for `receiver-ready` before sending `file-meta`.
+- Added readable sender-side timeouts while waiting for receiver control messages.
+- Added regression coverage for sender metadata waiting on receiver readiness.
+- Updated transfer protocol and WebRTC documentation for the receiver readiness handshake.
+- Bumped the package version to `0.1.4` for the transfer-start race patch.
+- Validated the patch with TypeScript checks, automated tests, build, full binary packaging, CLI version smoke tests, and a short Linux binary distributed receive startup smoke test.
 
 ## Pending Tasks
 
@@ -116,6 +123,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Validate distributed discovery between two real machines on different residential networks.
 - Run a real large-file benchmark with the default distributed discovery flow.
 - Improve user-facing troubleshooting for DHT discovery timeouts after real-world testing.
+- Publish `v0.1.4` for the receiver readiness race fix.
 
 ## Known Issues
 
@@ -129,6 +137,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 
 - Test `v0.1.3` on two real machines with the normal receive/send room flow.
 - Benchmark a larger file through the `v0.1.3` distributed discovery flow.
+- Validate the receiver readiness race fix with the packaged CLI on two machines.
 
 ## Decisions Already Made
 
@@ -168,7 +177,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 - Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
 - The latest release version is `v0.1.3`.
-- The current development version is `0.1.3`.
+- The current development version is `0.1.4`.
 
 ## Files Changed in the Latest Step
 
@@ -182,6 +191,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - `docs/SECURITY.md`
 - `docs/SIGNALING.md`
 - `docs/WEBRTC.md`
+- `docs/TRANSFER_PROTOCOL.md`
 - `package.json`
 - `package-lock.json`
 - `src/commands/help.ts`
@@ -190,5 +200,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - `src/commands/receive.ts`
 - `src/commands/send.ts`
 - `src/discovery/distributed-signaling.ts`
+- `src/transfer/sender.ts`
 - `src/types/hyperswarm.d.ts`
 - `tests/distributed-signaling.test.ts`
+- `tests/transfer-failure.test.ts`

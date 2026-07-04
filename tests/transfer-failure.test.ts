@@ -71,6 +71,28 @@ describe("transfer failure handling", () => {
     await writeFile(filePath, "send data", "utf8");
 
     const sendPromise = sendFile({ filePath, peer });
+    await peer.waitForDataHandler();
+    peer.emit(encodeTransferMessage({ type: "receiver-ready" }));
+    await peer.waitForSentMessage((message) => message.includes('"type":"file-meta"'));
+    peer.emitClose();
+
+    await expect(sendPromise).rejects.toThrow("Transfer interrupted because the peer disconnected.");
+  });
+
+  it("waits for receiver readiness before sending file metadata", async () => {
+    const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "a47-ready-send-"));
+    const filePath = path.join(temporaryDirectory, "ready.txt");
+    const peer = new FakePeer();
+
+    await writeFile(filePath, "ready data", "utf8");
+
+    const sendPromise = sendFile({ filePath, peer });
+    await peer.waitForDataHandler();
+    await waitForAsyncReceiverWork();
+
+    expect(peer.sentMessages.some((message) => message.includes('"type":"file-meta"'))).toBe(false);
+
+    peer.emit(encodeTransferMessage({ type: "receiver-ready" }));
     await peer.waitForSentMessage((message) => message.includes('"type":"file-meta"'));
     peer.emitClose();
 

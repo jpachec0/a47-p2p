@@ -20,17 +20,20 @@ interface SendFileOptions {
 }
 
 const MAX_BUFFERED_AMOUNT_BYTES = 32 * 1024 * 1024;
+const TRANSFER_CONTROL_TIMEOUT_MS = 120_000;
 
 export async function sendFile(options: SendFileOptions): Promise<void> {
   const chunkSizeBytes = options.chunkSizeBytes ?? DEFAULT_CHUNK_SIZE_BYTES;
   const fileStat = await stat(options.filePath);
   const fileName = path.basename(options.filePath);
+  const receiverReadyPromise = waitForTransferMessage(options.peer, "receiver-ready");
 
   console.log("Calculating SHA-256 hash...");
   const sha256 = await calculateFileSha256(options.filePath);
 
   await options.peer.waitUntilOpen();
   console.log("WebRTC DataChannel is open.");
+  await receiverReadyPromise;
 
   options.peer.send(
     encodeTransferMessage({
@@ -72,6 +75,9 @@ function waitForTransferMessage<TType extends TransferControlMessage["type"]>(
 ): Promise<Extract<TransferControlMessage, { type: TType }>> {
   return new Promise((resolve, reject) => {
     let isSettled = false;
+    const timeout = setTimeout(() => {
+      rejectOnce(new Error(`Timed out waiting for ${messageType}.`));
+    }, TRANSFER_CONTROL_TIMEOUT_MS);
 
     const rejectOnce = (error: Error): void => {
       if (isSettled) {
@@ -79,6 +85,7 @@ function waitForTransferMessage<TType extends TransferControlMessage["type"]>(
       }
 
       isSettled = true;
+      clearTimeout(timeout);
       reject(error);
     };
 
@@ -88,6 +95,7 @@ function waitForTransferMessage<TType extends TransferControlMessage["type"]>(
       }
 
       isSettled = true;
+      clearTimeout(timeout);
       resolve(message);
     };
 

@@ -43,7 +43,11 @@ If the hash does not match, the receiver removes the failed output file and repo
 
 ## Receiver Acceptance
 
-After file metadata arrives, the CLI receiver prompts the user to accept or reject the incoming file before any file bytes are written.
+After the DataChannel opens, the receiver registers its message handler and sends `receiver-ready`. The sender waits for this message before sending `file-meta`. This prevents a race where file metadata could arrive before the receiver was listening.
+
+After file metadata arrives, the CLI receiver prompts the user to accept or reject the incoming file before any file bytes are written. The sender waits for `receiver-accepted` before sending chunks.
+
+Sender-side waits for receiver control messages use a readable timeout instead of hanging indefinitely.
 
 ## Interrupted Transfers
 
