@@ -58,7 +58,7 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 14 have an MVP implementation path. Release tags `v0.1.0`, `v0.1.1`, and `v0.1.2` have been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
+Phases 1 through 14 have an MVP implementation path. Release tags `v0.1.0`, `v0.1.1`, `v0.1.2`, and `v0.1.3` have been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
 
 The `v0.1.1` release exposes the signaling server through the installed `a47 signaling` command and documents how to use a reachable server URL instead of `localhost` when sender and receiver run on different computers.
 
@@ -88,4 +88,6 @@ The `v0.1.1` release includes:
 - Public signaling Docker deployment notes.
 - TURN credential distribution plan.
 
-The `v0.1.2` release includes manual signaling so A47 can connect peers without any signaling server. The current `develop` branch adds distributed room discovery so users can share a short room code without typing IP addresses, running a WebSocket server, or depending on official A47 infrastructure.
+The `v0.1.2` release includes manual signaling so A47 can connect peers without any signaling server.
+
+The `v0.1.3` release includes distributed room discovery so users can share a short room code without typing IP addresses, running a WebSocket server, or depending on official A47 infrastructure.

@@ -166,9 +166,9 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 ## Install for Users
 
-Current published release: `v0.1.2`. The next release will make distributed room discovery the default user flow.
+Current published release: `v0.1.3`.
 
-The `v0.1.2` release includes zero-server manual signaling, so users can connect peers by copy-pasting offer and answer codes without running a signaling server. The current `develop` branch adds distributed room discovery so normal users can share a short room code instead of IP addresses or manual offer/answer codes. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.3` is pushed.
+The `v0.1.3` release includes distributed room discovery, so normal users can share a short room code instead of IP addresses or manual offer/answer codes. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.3` is pushed.
 
 Expected release assets:
 
