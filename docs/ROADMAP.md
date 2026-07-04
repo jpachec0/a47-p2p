@@ -58,7 +58,7 @@ Prepare normal-user installation and binary release documentation.
 
 ## Current Status
 
-Phases 1 through 14 have an MVP implementation path. Release tags `v0.1.0`, `v0.1.1`, `v0.1.2`, `v0.1.3`, `v0.1.4`, `v0.1.5`, and `v0.1.6` have been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
+Phases 1 through 14 have an MVP implementation path. Release tags `v0.1.0`, `v0.1.1`, `v0.1.2`, `v0.1.3`, `v0.1.4`, `v0.1.5`, `v0.1.6`, and `v0.1.7` have been published with Windows, Linux, macOS, and installer assets through GitHub Actions.
 
 The `v0.1.1` release exposes the signaling server through the installed `a47 signaling` command and documents how to use a reachable server URL instead of `localhost` when sender and receiver run on different computers.
 
@@ -97,3 +97,5 @@ The `v0.1.4` release fixes a transfer-start race by making the sender wait for r
 The `v0.1.5` release fixes a receiver finalization race by ignoring late DataChannel close events after all advertised bytes arrived and hash finalization started.
 
 The `v0.1.6` release adds an explicit `sender-complete` acknowledgement so successful transfers shut down in an ordered way.
+
+The `v0.1.7` release keeps packaged senders alive briefly after success and makes file-launch windows wait for Enter so users can read the final status.
