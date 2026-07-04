@@ -116,6 +116,10 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Updated transfer protocol and WebRTC documentation for the receiver readiness handshake.
 - Bumped the package version to `0.1.4` for the transfer-start race patch.
 - Validated the patch with TypeScript checks, automated tests, build, full binary packaging, CLI version smoke tests, and a short Linux binary distributed receive startup smoke test.
+- Committed and pushed the receiver readiness race fix to `develop`.
+- Tagged and published `v0.1.4`.
+- Verified that the GitHub Actions release workflow completed successfully for `v0.1.4`.
+- Verified that all expected `v0.1.4` release assets are attached to the GitHub Release.
 
 ## Pending Tasks
 
@@ -123,7 +127,6 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - Validate distributed discovery between two real machines on different residential networks.
 - Run a real large-file benchmark with the default distributed discovery flow.
 - Improve user-facing troubleshooting for DHT discovery timeouts after real-world testing.
-- Publish `v0.1.4` for the receiver readiness race fix.
 
 ## Known Issues
 
@@ -135,8 +138,8 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 
 ## Next Actions
 
-- Test `v0.1.3` on two real machines with the normal receive/send room flow.
-- Benchmark a larger file through the `v0.1.3` distributed discovery flow.
+- Test `v0.1.4` on two real machines with the normal receive/send room flow.
+- Benchmark a larger file through the `v0.1.4` distributed discovery flow.
 - Validate the receiver readiness race fix with the packaged CLI on two machines.
 
 ## Decisions Already Made
@@ -164,6 +167,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - The `v0.1.1` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.1`.
 - The `v0.1.2` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.2`.
 - The `v0.1.3` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.3`.
+- The `v0.1.4` release assets are published at `https://github.com/jpachec0/a47-p2p/releases/tag/v0.1.4`.
 - Installed users can run the signaling server with `a47 signaling --port 4747`.
 - LAN users should run `a47 signaling --host 0.0.0.0 --port 4747` on one machine and use `ws://<server-ip>:4747` from both peers.
 - Users can avoid the signaling server entirely with `a47 receive --manual` and `a47 send <path> --manual`.
@@ -176,7 +180,7 @@ Phase 14 - Distributed room discovery and normal-user transfer flow.
 - ICE server URLs are configurable through the `ice-servers` config key.
 - Authenticated TURN entries use JSON ICE server objects and must not be committed with real credentials.
 - Public release TURN credentials should be short-lived and fetched from trusted infrastructure, not bundled into the CLI or installers.
-- The latest release version is `v0.1.3`.
+- The latest release version is `v0.1.4`.
 - The current development version is `0.1.4`.
 
 ## Files Changed in the Latest Step
