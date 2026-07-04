@@ -166,9 +166,9 @@ Normal errors are printed without raw stack traces. Use `--debug` or `A47_DEBUG=
 
 ## Install for Users
 
-Current published release: `v0.1.5`.
+Current published release: `v0.1.6`.
 
-The `v0.1.5` release includes distributed room discovery plus transfer-start and receiver-finalization race fixes, so normal users can share a short room code instead of IP addresses or manual offer/answer codes. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.5` is pushed.
+The `v0.1.6` release includes distributed room discovery plus ordered transfer startup and shutdown handshakes, so normal users can share a short room code instead of IP addresses or manual offer/answer codes. User-ready binary releases are built by GitHub Actions when a version tag such as `v0.1.6` is pushed.
 
 Expected release assets:
 
